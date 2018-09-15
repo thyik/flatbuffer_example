@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flatbuffer_csharp17", "flatbuffer_csharp17\flatbuffer_csharp17.csproj", "{A773BB71-4B64-489B-8197-4ED8975E799C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A773BB71-4B64-489B-8197-4ED8975E799C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A773BB71-4B64-489B-8197-4ED8975E799C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A773BB71-4B64-489B-8197-4ED8975E799C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A773BB71-4B64-489B-8197-4ED8975E799C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E3DDC730-1AA2-49BF-A7E5-56DD2783F340}
+	EndGlobalSection
+EndGlobal

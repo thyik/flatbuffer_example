@@ -1,0 +1,13 @@
+// Example IDL file for our WaferMap's schema.
+namespace MitWMap;
+enum format:byte { Ascii = 1, Hex = 2 , Dec = 3 }
+
+table WaferMap {
+  waferid:string;
+  wafernum:short = 0;
+  lotid:string;
+  binFormat:format = Ascii;
+  map:[short];  // Vector of short.
+}
+
+root_type WaferMap;
