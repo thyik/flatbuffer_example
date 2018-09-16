@@ -116,7 +116,12 @@ namespace FlatBuffers
         }
 
 #if !ENABLE_SPAN_T
-        public override byte[] ByteArray => _buffer;
+        public override byte[] ByteArray
+        {
+            // C# 7.0 lambda syntax. cannot use on C# 4.0
+            //=> _buffer;
+            get { return _buffer; } 
+        }
 #endif
 
 #if UNSAFE_BYTEBUFFER
