@@ -1,0 +1,16 @@
+// Example IDL file for our flatbuffer_ini's schema.
+namespace MitFBINI;
+
+table FBINI {
+  section:string;
+  item:[KEYVALUE];
+}
+
+table KEYVALUE{
+	key:string;
+	strValue:string;
+	lValue:long;
+	dValue:float;
+}
+
+root_type FBINI;

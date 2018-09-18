@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "..\..\schema\mit_WMap_generated.h"
+#include "FbIni.h"
 
 using namespace MitWMap;
 void loadFlatbuffer();
@@ -10,6 +11,12 @@ void loadFlatbuffer();
 int _tmain(int argc, _TCHAR* argv[])
 {
     loadFlatbuffer();
+
+    CFbIni fbIni;
+
+    fbIni.Save("D:\\Temp\\fbini.bin");
+    fbIni.Load("D:\\Temp\\fbini.bin");
+
 	return 0;
 }
 
