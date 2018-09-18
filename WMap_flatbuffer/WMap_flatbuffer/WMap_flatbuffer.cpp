@@ -17,27 +17,48 @@ void loadFlatbuffer()
 {
     flatbuffers::FlatBufferBuilder builder;
 
-    auto waferid = builder.CreateString("TestWaferC++");
-    auto wafernum = 1;
+    auto waferFab = builder.CreateString("TestWaferC++");
+    auto wafernum = builder.CreateString("1");
     auto lotid = builder.CreateString("LotWaferC++");
+
+    auto fabCode   = builder.CreateString("fabCode C++");
+    auto intCode   = builder.CreateString("intCode C++");
+    auto lotNum    = builder.CreateString("LotNum C++");
+    auto device    = builder.CreateString("device C++");
+    auto designId  = builder.CreateString("designId C++");
+    auto scribId   = builder.CreateString("scribId C++");
+    auto scribLot  = builder.CreateString("scribLot C++");
     auto binFormat = format_Hex;
     //
     short map_data[] = { 0, 11, 2, 3, 4, 5, 6, 77, 8, 9 };
     auto map_info = builder.CreateVector(map_data, 10);
 
-    auto mitMap = CreateWaferMap(builder, waferid, wafernum, lotid, binFormat, map_info);
+    auto mitMap = CreateWaferMap(builder
+                    , 5
+                    , 2
+                    , map_info
+                    , waferFab
+                    , fabCode
+                    , intCode
+                    , lotNum
+                    , device
+                    , designId
+                    , scribId
+                    , scribLot
+                    , wafernum);
 
+    
     builder.Finish(mitMap);  // Serialize the root of the object.
 
+    
   //auto weapon_one_name = builder.CreateString("Sword");
   //short weapon_one_damage = 3;
 
     auto readMap = GetWaferMap(builder.GetBufferPointer());
 
-    printf("Waferid : %s\n", readMap->waferid()->str().c_str());
-    printf("WaferNum : %d\n", readMap->wafernum());
-    printf("Format : %d\n", readMap->binFormat());
-    printf("Lotid : %s\n", readMap->lotid()->str().c_str());
+    printf("Waferid : %s\n", readMap->waferFab()->str().c_str());
+    printf("WaferNum : %s\n", readMap->waferNum()->str().c_str());
+    printf("Lotid : %s\n", readMap->lotNum()->str().c_str());
 
     for (auto it = readMap->map()->begin();
         it != readMap->map()->end();
@@ -68,10 +89,9 @@ void loadFlatbuffer()
     auto filemap = GetWaferMap(buf2.get());
 
     printf("\n");
-    printf("Waferid : %s\n",    filemap->waferid()->str().c_str());
-    printf("WaferNum : %d\n",   filemap->wafernum());
-    printf("Format : %d\n",     filemap->binFormat());
-    printf("Lotid : %s\n",      filemap->lotid()->str().c_str());
+    printf("Waferid : %s\n",    filemap->waferFab()->str().c_str());
+    printf("WaferNum : %d\n",   filemap->waferNum()->str().c_str());
+    printf("Lotid : %s\n",      filemap->lotNum()->str().c_str());
 
     for (auto it = filemap->map()->begin();
         it != filemap->map()->end();

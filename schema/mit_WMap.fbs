@@ -2,12 +2,36 @@
 namespace MitWMap;
 enum format:byte { Ascii = 1, Hex = 2 , Dec = 3 }
 
+struct stXY {
+  x:int;
+  y:int;
+}
+
 table WaferMap {
-  waferid:string;
-  wafernum:short = 0;
-  lotid:string;
-  binFormat:format = Ascii;
+  maxRow:int = 0;
+  maxCol:int = 0;
   map:[short];  // Vector of short.
+  waferFab:string;
+  fabCode:string;
+  intCode:string;
+  lotNum:string;
+  device:string;
+  designId:string;
+  scribId:string;
+  scribLot:string;
+  waferNum:string;
+  mapId:short = 0;
+  numRefDie:short = 0;
+  refDie:[stXY];	// vector of struct
+  refChipDir:short = 0;
+  refNotch:short = 0;
+  startLoc:stXY;
+  nullBin:short = 0;
+  dieSizeX:float = 0.0;
+  dieSizeY:float = 0.0;
+  degRotated:short = 0;
+  bincodeFormat:format = Ascii;
+
 }
 
 root_type WaferMap;

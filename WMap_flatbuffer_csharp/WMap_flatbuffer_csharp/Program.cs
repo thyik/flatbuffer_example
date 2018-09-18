@@ -23,11 +23,21 @@ namespace WMap_flatbuffer_csharp
             var lotid = builder.CreateString("LotWafer");
             var binFormat = format.Hex;
             var data = new short[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            var map_info = WaferMap.CreateMapVector(builder, data);
 
-            var mitMap = WaferMap.CreateWaferMap(builder, waferid, wnum, lotid, binFormat, map_info);
+            var mapdata = WaferMap.CreateMapVector(builder, data);
+
+            WaferMap.StartWaferMap(builder);
+            WaferMap.AddMap(builder, mapdata);
+            WaferMap.AddMaxCol(builder, 5);
+            WaferMap.AddMaxRow(builder, 2);
+
+            WaferMap.AddLotNum(builder, lotid);
+            WaferMap.AddBincodeFormat(builder, binFormat);
+            
+            var mitMap = WaferMap.EndWaferMap(builder);
 
             builder.Finish(mitMap.Value);
+
             /// serialize to file
             /// 
             var filename = "D:\\Temp\\csharp.dat";
@@ -44,8 +54,8 @@ namespace WMap_flatbuffer_csharp
             // Get access to the root:
             var readMap = WaferMap.GetRootAsWaferMap(buf);
 
-            Console.WriteLine("LotId : " + readMap.Lotid);
-            Console.WriteLine("BinFormat : " + readMap.BinFormat);
+            Console.WriteLine("LotId : " + readMap.LotNum);
+            Console.WriteLine("BinFormat : " + readMap.BincodeFormat);
 
             for (int i = 0; i < readMap.MapLength; i++)
             {
@@ -63,7 +73,7 @@ namespace WMap_flatbuffer_csharp
             var loadBytebuf = new ByteBuffer(loadbuf);
             var loadMap = WaferMap.GetRootAsWaferMap(loadBytebuf);
 
-            Console.WriteLine("LotId : " + loadMap.Lotid);
+            Console.WriteLine("LotId : " + loadMap.LotNum);
 
             // binary reader
             filename = "D:\\Temp\\output.dat";
@@ -79,7 +89,7 @@ namespace WMap_flatbuffer_csharp
             var loadbinBytebuf = new ByteBuffer(loadbinbuf);
             var loadbinMap = WaferMap.GetRootAsWaferMap(loadbinBytebuf);
 
-            Console.WriteLine("LotId : " + loadbinMap.Lotid);
+            Console.WriteLine("LotId : " + loadbinMap.LotNum);
             for (int i = 0; i < loadbinMap.MapLength; i++)
             {
                 Console.WriteLine(loadbinMap.Map(i).ToString());

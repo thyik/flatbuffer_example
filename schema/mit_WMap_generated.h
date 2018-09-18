@@ -8,6 +8,8 @@
 
 namespace MitWMap {
 
+struct stXY;
+
 struct WaferMap;
 
 enum format {
@@ -42,39 +44,159 @@ inline const char *EnumNameformat(format e) {
   return EnumNamesformat()[index];
 }
 
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stXY FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t x_;
+  int32_t y_;
+
+ public:
+  stXY() {
+    memset(this, 0, sizeof(stXY));
+  }
+  stXY(int32_t _x, int32_t _y)
+      : x_(flatbuffers::EndianScalar(_x)),
+        y_(flatbuffers::EndianScalar(_y)) {
+  }
+  int32_t x() const {
+    return flatbuffers::EndianScalar(x_);
+  }
+  int32_t y() const {
+    return flatbuffers::EndianScalar(y_);
+  }
+};
+FLATBUFFERS_STRUCT_END(stXY, 8);
+
 struct WaferMap FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
-    VT_WAFERID = 4,
-    VT_WAFERNUM = 6,
-    VT_LOTID = 8,
-    VT_BINFORMAT = 10,
-    VT_MAP = 12
+    VT_MAXROW = 4,
+    VT_MAXCOL = 6,
+    VT_MAP = 8,
+    VT_WAFERFAB = 10,
+    VT_FABCODE = 12,
+    VT_INTCODE = 14,
+    VT_LOTNUM = 16,
+    VT_DEVICE = 18,
+    VT_DESIGNID = 20,
+    VT_SCRIBID = 22,
+    VT_SCRIBLOT = 24,
+    VT_WAFERNUM = 26,
+    VT_MAPID = 28,
+    VT_NUMREFDIE = 30,
+    VT_REFDIE = 32,
+    VT_REFCHIPDIR = 34,
+    VT_REFNOTCH = 36,
+    VT_STARTLOC = 38,
+    VT_NULLBIN = 40,
+    VT_DIESIZEX = 42,
+    VT_DIESIZEY = 44,
+    VT_DEGROTATED = 46,
+    VT_BINCODEFORMAT = 48
   };
-  const flatbuffers::String *waferid() const {
-    return GetPointer<const flatbuffers::String *>(VT_WAFERID);
+  int32_t maxRow() const {
+    return GetField<int32_t>(VT_MAXROW, 0);
   }
-  int16_t wafernum() const {
-    return GetField<int16_t>(VT_WAFERNUM, 0);
-  }
-  const flatbuffers::String *lotid() const {
-    return GetPointer<const flatbuffers::String *>(VT_LOTID);
-  }
-  format binFormat() const {
-    return static_cast<format>(GetField<int8_t>(VT_BINFORMAT, 1));
+  int32_t maxCol() const {
+    return GetField<int32_t>(VT_MAXCOL, 0);
   }
   const flatbuffers::Vector<int16_t> *map() const {
     return GetPointer<const flatbuffers::Vector<int16_t> *>(VT_MAP);
   }
+  const flatbuffers::String *waferFab() const {
+    return GetPointer<const flatbuffers::String *>(VT_WAFERFAB);
+  }
+  const flatbuffers::String *fabCode() const {
+    return GetPointer<const flatbuffers::String *>(VT_FABCODE);
+  }
+  const flatbuffers::String *intCode() const {
+    return GetPointer<const flatbuffers::String *>(VT_INTCODE);
+  }
+  const flatbuffers::String *lotNum() const {
+    return GetPointer<const flatbuffers::String *>(VT_LOTNUM);
+  }
+  const flatbuffers::String *device() const {
+    return GetPointer<const flatbuffers::String *>(VT_DEVICE);
+  }
+  const flatbuffers::String *designId() const {
+    return GetPointer<const flatbuffers::String *>(VT_DESIGNID);
+  }
+  const flatbuffers::String *scribId() const {
+    return GetPointer<const flatbuffers::String *>(VT_SCRIBID);
+  }
+  const flatbuffers::String *scribLot() const {
+    return GetPointer<const flatbuffers::String *>(VT_SCRIBLOT);
+  }
+  const flatbuffers::String *waferNum() const {
+    return GetPointer<const flatbuffers::String *>(VT_WAFERNUM);
+  }
+  int16_t mapId() const {
+    return GetField<int16_t>(VT_MAPID, 0);
+  }
+  int16_t numRefDie() const {
+    return GetField<int16_t>(VT_NUMREFDIE, 0);
+  }
+  const flatbuffers::Vector<const stXY *> *refDie() const {
+    return GetPointer<const flatbuffers::Vector<const stXY *> *>(VT_REFDIE);
+  }
+  int16_t refChipDir() const {
+    return GetField<int16_t>(VT_REFCHIPDIR, 0);
+  }
+  int16_t refNotch() const {
+    return GetField<int16_t>(VT_REFNOTCH, 0);
+  }
+  const stXY *startLoc() const {
+    return GetStruct<const stXY *>(VT_STARTLOC);
+  }
+  int16_t nullBin() const {
+    return GetField<int16_t>(VT_NULLBIN, 0);
+  }
+  float dieSizeX() const {
+    return GetField<float>(VT_DIESIZEX, 0.0f);
+  }
+  float dieSizeY() const {
+    return GetField<float>(VT_DIESIZEY, 0.0f);
+  }
+  int16_t degRotated() const {
+    return GetField<int16_t>(VT_DEGROTATED, 0);
+  }
+  format bincodeFormat() const {
+    return static_cast<format>(GetField<int8_t>(VT_BINCODEFORMAT, 1));
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_WAFERID) &&
-           verifier.VerifyString(waferid()) &&
-           VerifyField<int16_t>(verifier, VT_WAFERNUM) &&
-           VerifyOffset(verifier, VT_LOTID) &&
-           verifier.VerifyString(lotid()) &&
-           VerifyField<int8_t>(verifier, VT_BINFORMAT) &&
+           VerifyField<int32_t>(verifier, VT_MAXROW) &&
+           VerifyField<int32_t>(verifier, VT_MAXCOL) &&
            VerifyOffset(verifier, VT_MAP) &&
            verifier.VerifyVector(map()) &&
+           VerifyOffset(verifier, VT_WAFERFAB) &&
+           verifier.VerifyString(waferFab()) &&
+           VerifyOffset(verifier, VT_FABCODE) &&
+           verifier.VerifyString(fabCode()) &&
+           VerifyOffset(verifier, VT_INTCODE) &&
+           verifier.VerifyString(intCode()) &&
+           VerifyOffset(verifier, VT_LOTNUM) &&
+           verifier.VerifyString(lotNum()) &&
+           VerifyOffset(verifier, VT_DEVICE) &&
+           verifier.VerifyString(device()) &&
+           VerifyOffset(verifier, VT_DESIGNID) &&
+           verifier.VerifyString(designId()) &&
+           VerifyOffset(verifier, VT_SCRIBID) &&
+           verifier.VerifyString(scribId()) &&
+           VerifyOffset(verifier, VT_SCRIBLOT) &&
+           verifier.VerifyString(scribLot()) &&
+           VerifyOffset(verifier, VT_WAFERNUM) &&
+           verifier.VerifyString(waferNum()) &&
+           VerifyField<int16_t>(verifier, VT_MAPID) &&
+           VerifyField<int16_t>(verifier, VT_NUMREFDIE) &&
+           VerifyOffset(verifier, VT_REFDIE) &&
+           verifier.VerifyVector(refDie()) &&
+           VerifyField<int16_t>(verifier, VT_REFCHIPDIR) &&
+           VerifyField<int16_t>(verifier, VT_REFNOTCH) &&
+           VerifyField<stXY>(verifier, VT_STARTLOC) &&
+           VerifyField<int16_t>(verifier, VT_NULLBIN) &&
+           VerifyField<float>(verifier, VT_DIESIZEX) &&
+           VerifyField<float>(verifier, VT_DIESIZEY) &&
+           VerifyField<int16_t>(verifier, VT_DEGROTATED) &&
+           VerifyField<int8_t>(verifier, VT_BINCODEFORMAT) &&
            verifier.EndTable();
   }
 };
@@ -82,20 +204,74 @@ struct WaferMap FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 struct WaferMapBuilder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_waferid(flatbuffers::Offset<flatbuffers::String> waferid) {
-    fbb_.AddOffset(WaferMap::VT_WAFERID, waferid);
+  void add_maxRow(int32_t maxRow) {
+    fbb_.AddElement<int32_t>(WaferMap::VT_MAXROW, maxRow, 0);
   }
-  void add_wafernum(int16_t wafernum) {
-    fbb_.AddElement<int16_t>(WaferMap::VT_WAFERNUM, wafernum, 0);
-  }
-  void add_lotid(flatbuffers::Offset<flatbuffers::String> lotid) {
-    fbb_.AddOffset(WaferMap::VT_LOTID, lotid);
-  }
-  void add_binFormat(format binFormat) {
-    fbb_.AddElement<int8_t>(WaferMap::VT_BINFORMAT, static_cast<int8_t>(binFormat), 1);
+  void add_maxCol(int32_t maxCol) {
+    fbb_.AddElement<int32_t>(WaferMap::VT_MAXCOL, maxCol, 0);
   }
   void add_map(flatbuffers::Offset<flatbuffers::Vector<int16_t>> map) {
     fbb_.AddOffset(WaferMap::VT_MAP, map);
+  }
+  void add_waferFab(flatbuffers::Offset<flatbuffers::String> waferFab) {
+    fbb_.AddOffset(WaferMap::VT_WAFERFAB, waferFab);
+  }
+  void add_fabCode(flatbuffers::Offset<flatbuffers::String> fabCode) {
+    fbb_.AddOffset(WaferMap::VT_FABCODE, fabCode);
+  }
+  void add_intCode(flatbuffers::Offset<flatbuffers::String> intCode) {
+    fbb_.AddOffset(WaferMap::VT_INTCODE, intCode);
+  }
+  void add_lotNum(flatbuffers::Offset<flatbuffers::String> lotNum) {
+    fbb_.AddOffset(WaferMap::VT_LOTNUM, lotNum);
+  }
+  void add_device(flatbuffers::Offset<flatbuffers::String> device) {
+    fbb_.AddOffset(WaferMap::VT_DEVICE, device);
+  }
+  void add_designId(flatbuffers::Offset<flatbuffers::String> designId) {
+    fbb_.AddOffset(WaferMap::VT_DESIGNID, designId);
+  }
+  void add_scribId(flatbuffers::Offset<flatbuffers::String> scribId) {
+    fbb_.AddOffset(WaferMap::VT_SCRIBID, scribId);
+  }
+  void add_scribLot(flatbuffers::Offset<flatbuffers::String> scribLot) {
+    fbb_.AddOffset(WaferMap::VT_SCRIBLOT, scribLot);
+  }
+  void add_waferNum(flatbuffers::Offset<flatbuffers::String> waferNum) {
+    fbb_.AddOffset(WaferMap::VT_WAFERNUM, waferNum);
+  }
+  void add_mapId(int16_t mapId) {
+    fbb_.AddElement<int16_t>(WaferMap::VT_MAPID, mapId, 0);
+  }
+  void add_numRefDie(int16_t numRefDie) {
+    fbb_.AddElement<int16_t>(WaferMap::VT_NUMREFDIE, numRefDie, 0);
+  }
+  void add_refDie(flatbuffers::Offset<flatbuffers::Vector<const stXY *>> refDie) {
+    fbb_.AddOffset(WaferMap::VT_REFDIE, refDie);
+  }
+  void add_refChipDir(int16_t refChipDir) {
+    fbb_.AddElement<int16_t>(WaferMap::VT_REFCHIPDIR, refChipDir, 0);
+  }
+  void add_refNotch(int16_t refNotch) {
+    fbb_.AddElement<int16_t>(WaferMap::VT_REFNOTCH, refNotch, 0);
+  }
+  void add_startLoc(const stXY *startLoc) {
+    fbb_.AddStruct(WaferMap::VT_STARTLOC, startLoc);
+  }
+  void add_nullBin(int16_t nullBin) {
+    fbb_.AddElement<int16_t>(WaferMap::VT_NULLBIN, nullBin, 0);
+  }
+  void add_dieSizeX(float dieSizeX) {
+    fbb_.AddElement<float>(WaferMap::VT_DIESIZEX, dieSizeX, 0.0f);
+  }
+  void add_dieSizeY(float dieSizeY) {
+    fbb_.AddElement<float>(WaferMap::VT_DIESIZEY, dieSizeY, 0.0f);
+  }
+  void add_degRotated(int16_t degRotated) {
+    fbb_.AddElement<int16_t>(WaferMap::VT_DEGROTATED, degRotated, 0);
+  }
+  void add_bincodeFormat(format bincodeFormat) {
+    fbb_.AddElement<int8_t>(WaferMap::VT_BINCODEFORMAT, static_cast<int8_t>(bincodeFormat), 1);
   }
   explicit WaferMapBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -111,34 +287,106 @@ struct WaferMapBuilder {
 
 inline flatbuffers::Offset<WaferMap> CreateWaferMap(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::String> waferid = 0,
-    int16_t wafernum = 0,
-    flatbuffers::Offset<flatbuffers::String> lotid = 0,
-    format binFormat = format_Ascii,
-    flatbuffers::Offset<flatbuffers::Vector<int16_t>> map = 0) {
+    int32_t maxRow = 0,
+    int32_t maxCol = 0,
+    flatbuffers::Offset<flatbuffers::Vector<int16_t>> map = 0,
+    flatbuffers::Offset<flatbuffers::String> waferFab = 0,
+    flatbuffers::Offset<flatbuffers::String> fabCode = 0,
+    flatbuffers::Offset<flatbuffers::String> intCode = 0,
+    flatbuffers::Offset<flatbuffers::String> lotNum = 0,
+    flatbuffers::Offset<flatbuffers::String> device = 0,
+    flatbuffers::Offset<flatbuffers::String> designId = 0,
+    flatbuffers::Offset<flatbuffers::String> scribId = 0,
+    flatbuffers::Offset<flatbuffers::String> scribLot = 0,
+    flatbuffers::Offset<flatbuffers::String> waferNum = 0,
+    int16_t mapId = 0,
+    int16_t numRefDie = 0,
+    flatbuffers::Offset<flatbuffers::Vector<const stXY *>> refDie = 0,
+    int16_t refChipDir = 0,
+    int16_t refNotch = 0,
+    const stXY *startLoc = 0,
+    int16_t nullBin = 0,
+    float dieSizeX = 0.0f,
+    float dieSizeY = 0.0f,
+    int16_t degRotated = 0,
+    format bincodeFormat = format_Ascii) {
   WaferMapBuilder builder_(_fbb);
+  builder_.add_dieSizeY(dieSizeY);
+  builder_.add_dieSizeX(dieSizeX);
+  builder_.add_startLoc(startLoc);
+  builder_.add_refDie(refDie);
+  builder_.add_waferNum(waferNum);
+  builder_.add_scribLot(scribLot);
+  builder_.add_scribId(scribId);
+  builder_.add_designId(designId);
+  builder_.add_device(device);
+  builder_.add_lotNum(lotNum);
+  builder_.add_intCode(intCode);
+  builder_.add_fabCode(fabCode);
+  builder_.add_waferFab(waferFab);
   builder_.add_map(map);
-  builder_.add_lotid(lotid);
-  builder_.add_waferid(waferid);
-  builder_.add_wafernum(wafernum);
-  builder_.add_binFormat(binFormat);
+  builder_.add_maxCol(maxCol);
+  builder_.add_maxRow(maxRow);
+  builder_.add_degRotated(degRotated);
+  builder_.add_nullBin(nullBin);
+  builder_.add_refNotch(refNotch);
+  builder_.add_refChipDir(refChipDir);
+  builder_.add_numRefDie(numRefDie);
+  builder_.add_mapId(mapId);
+  builder_.add_bincodeFormat(bincodeFormat);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<WaferMap> CreateWaferMapDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const char *waferid = nullptr,
-    int16_t wafernum = 0,
-    const char *lotid = nullptr,
-    format binFormat = format_Ascii,
-    const std::vector<int16_t> *map = nullptr) {
+    int32_t maxRow = 0,
+    int32_t maxCol = 0,
+    const std::vector<int16_t> *map = nullptr,
+    const char *waferFab = nullptr,
+    const char *fabCode = nullptr,
+    const char *intCode = nullptr,
+    const char *lotNum = nullptr,
+    const char *device = nullptr,
+    const char *designId = nullptr,
+    const char *scribId = nullptr,
+    const char *scribLot = nullptr,
+    const char *waferNum = nullptr,
+    int16_t mapId = 0,
+    int16_t numRefDie = 0,
+    const std::vector<stXY> *refDie = nullptr,
+    int16_t refChipDir = 0,
+    int16_t refNotch = 0,
+    const stXY *startLoc = 0,
+    int16_t nullBin = 0,
+    float dieSizeX = 0.0f,
+    float dieSizeY = 0.0f,
+    int16_t degRotated = 0,
+    format bincodeFormat = format_Ascii) {
   return MitWMap::CreateWaferMap(
       _fbb,
-      waferid ? _fbb.CreateString(waferid) : 0,
-      wafernum,
-      lotid ? _fbb.CreateString(lotid) : 0,
-      binFormat,
-      map ? _fbb.CreateVector<int16_t>(*map) : 0);
+      maxRow,
+      maxCol,
+      map ? _fbb.CreateVector<int16_t>(*map) : 0,
+      waferFab ? _fbb.CreateString(waferFab) : 0,
+      fabCode ? _fbb.CreateString(fabCode) : 0,
+      intCode ? _fbb.CreateString(intCode) : 0,
+      lotNum ? _fbb.CreateString(lotNum) : 0,
+      device ? _fbb.CreateString(device) : 0,
+      designId ? _fbb.CreateString(designId) : 0,
+      scribId ? _fbb.CreateString(scribId) : 0,
+      scribLot ? _fbb.CreateString(scribLot) : 0,
+      waferNum ? _fbb.CreateString(waferNum) : 0,
+      mapId,
+      numRefDie,
+      refDie ? _fbb.CreateVectorOfStructs<stXY>(*refDie) : 0,
+      refChipDir,
+      refNotch,
+      startLoc,
+      nullBin,
+      dieSizeX,
+      dieSizeY,
+      degRotated,
+      bincodeFormat);
 }
 
 inline const MitWMap::WaferMap *GetWaferMap(const void *buf) {
