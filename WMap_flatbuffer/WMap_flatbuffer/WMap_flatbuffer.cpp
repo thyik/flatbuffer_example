@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "..\..\schema\mit_WMap_generated.h"
 #include "FbIni.h"
+#include "FbLotInfoArm.h"
 
 using namespace MitWMap;
 void loadFlatbuffer();
@@ -16,6 +17,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
     fbIni.Save("D:\\Temp\\fbini.bin");
     fbIni.Load("D:\\Temp\\fbini.bin");
+
+    CFbLotInfoArm fbLotInfoArm;
+    fbLotInfoArm.Save("D:\\Temp\\fblotinfo_arm.fbb");
+    fbLotInfoArm.Load("D:\\Temp\\fblotinfo_arm.fbb");
 
 	return 0;
 }

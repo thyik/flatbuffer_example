@@ -1,0 +1,17 @@
+// Example IDL file for our lotinfo_arm's schema.
+namespace lotinfo_arm;
+
+table ARM_RECORD {
+	fieldname:string;
+	stats:[ARM];  //0,1,2,3,..
+}
+
+table ARM {
+  pass:long;
+  fail:long;
+  lost:long;
+  total:long;
+  yield:float;
+}
+
+root_type ARM_RECORD;
