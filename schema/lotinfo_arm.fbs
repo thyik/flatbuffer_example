@@ -1,8 +1,13 @@
 // Example IDL file for our lotinfo_arm's schema.
 namespace lotinfo_arm;
 
+table TABLE_ITEM {
+   name:string;  // optional for naming the table
+   lotinfo:[ARM_RECORD];
+}
+
 table ARM_RECORD {
-	fieldname:string;
+	name:string;
 	stats:[ARM];  //0,1,2,3,..
 }
 
@@ -14,4 +19,4 @@ table ARM {
   yield:float;
 }
 
-root_type ARM_RECORD;
+root_type TABLE_ITEM;

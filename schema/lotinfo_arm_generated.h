@@ -8,25 +8,90 @@
 
 namespace lotinfo_arm {
 
+struct TABLE_ITEM;
+
 struct ARM_RECORD;
 
 struct ARM;
 
+struct TABLE_ITEM FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_NAME = 4,
+    VT_LOTINFO = 6
+  };
+  const flatbuffers::String *name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NAME);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<ARM_RECORD>> *lotinfo() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<ARM_RECORD>> *>(VT_LOTINFO);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
+           VerifyOffset(verifier, VT_LOTINFO) &&
+           verifier.VerifyVector(lotinfo()) &&
+           verifier.VerifyVectorOfTables(lotinfo()) &&
+           verifier.EndTable();
+  }
+};
+
+struct TABLE_ITEMBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_name(flatbuffers::Offset<flatbuffers::String> name) {
+    fbb_.AddOffset(TABLE_ITEM::VT_NAME, name);
+  }
+  void add_lotinfo(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<ARM_RECORD>>> lotinfo) {
+    fbb_.AddOffset(TABLE_ITEM::VT_LOTINFO, lotinfo);
+  }
+  explicit TABLE_ITEMBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TABLE_ITEMBuilder &operator=(const TABLE_ITEMBuilder &);
+  flatbuffers::Offset<TABLE_ITEM> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TABLE_ITEM>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TABLE_ITEM> CreateTABLE_ITEM(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> name = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<ARM_RECORD>>> lotinfo = 0) {
+  TABLE_ITEMBuilder builder_(_fbb);
+  builder_.add_lotinfo(lotinfo);
+  builder_.add_name(name);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TABLE_ITEM> CreateTABLE_ITEMDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *name = nullptr,
+    const std::vector<flatbuffers::Offset<ARM_RECORD>> *lotinfo = nullptr) {
+  return lotinfo_arm::CreateTABLE_ITEM(
+      _fbb,
+      name ? _fbb.CreateString(name) : 0,
+      lotinfo ? _fbb.CreateVector<flatbuffers::Offset<ARM_RECORD>>(*lotinfo) : 0);
+}
+
 struct ARM_RECORD FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
-    VT_FIELDNAME = 4,
+    VT_NAME = 4,
     VT_STATS = 6
   };
-  const flatbuffers::String *fieldname() const {
-    return GetPointer<const flatbuffers::String *>(VT_FIELDNAME);
+  const flatbuffers::String *name() const {
+    return GetPointer<const flatbuffers::String *>(VT_NAME);
   }
   const flatbuffers::Vector<flatbuffers::Offset<ARM>> *stats() const {
     return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<ARM>> *>(VT_STATS);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_FIELDNAME) &&
-           verifier.VerifyString(fieldname()) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
            VerifyOffset(verifier, VT_STATS) &&
            verifier.VerifyVector(stats()) &&
            verifier.VerifyVectorOfTables(stats()) &&
@@ -37,8 +102,8 @@ struct ARM_RECORD FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 struct ARM_RECORDBuilder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_fieldname(flatbuffers::Offset<flatbuffers::String> fieldname) {
-    fbb_.AddOffset(ARM_RECORD::VT_FIELDNAME, fieldname);
+  void add_name(flatbuffers::Offset<flatbuffers::String> name) {
+    fbb_.AddOffset(ARM_RECORD::VT_NAME, name);
   }
   void add_stats(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<ARM>>> stats) {
     fbb_.AddOffset(ARM_RECORD::VT_STATS, stats);
@@ -57,21 +122,21 @@ struct ARM_RECORDBuilder {
 
 inline flatbuffers::Offset<ARM_RECORD> CreateARM_RECORD(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::String> fieldname = 0,
+    flatbuffers::Offset<flatbuffers::String> name = 0,
     flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<ARM>>> stats = 0) {
   ARM_RECORDBuilder builder_(_fbb);
   builder_.add_stats(stats);
-  builder_.add_fieldname(fieldname);
+  builder_.add_name(name);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<ARM_RECORD> CreateARM_RECORDDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const char *fieldname = nullptr,
+    const char *name = nullptr,
     const std::vector<flatbuffers::Offset<ARM>> *stats = nullptr) {
   return lotinfo_arm::CreateARM_RECORD(
       _fbb,
-      fieldname ? _fbb.CreateString(fieldname) : 0,
+      name ? _fbb.CreateString(name) : 0,
       stats ? _fbb.CreateVector<flatbuffers::Offset<ARM>>(*stats) : 0);
 }
 
@@ -155,33 +220,33 @@ inline flatbuffers::Offset<ARM> CreateARM(
   return builder_.Finish();
 }
 
-inline const lotinfo_arm::ARM_RECORD *GetARM_RECORD(const void *buf) {
-  return flatbuffers::GetRoot<lotinfo_arm::ARM_RECORD>(buf);
+inline const lotinfo_arm::TABLE_ITEM *GetTABLE_ITEM(const void *buf) {
+  return flatbuffers::GetRoot<lotinfo_arm::TABLE_ITEM>(buf);
 }
 
-inline const lotinfo_arm::ARM_RECORD *GetSizePrefixedARM_RECORD(const void *buf) {
-  return flatbuffers::GetSizePrefixedRoot<lotinfo_arm::ARM_RECORD>(buf);
+inline const lotinfo_arm::TABLE_ITEM *GetSizePrefixedTABLE_ITEM(const void *buf) {
+  return flatbuffers::GetSizePrefixedRoot<lotinfo_arm::TABLE_ITEM>(buf);
 }
 
-inline bool VerifyARM_RECORDBuffer(
+inline bool VerifyTABLE_ITEMBuffer(
     flatbuffers::Verifier &verifier) {
-  return verifier.VerifyBuffer<lotinfo_arm::ARM_RECORD>(nullptr);
+  return verifier.VerifyBuffer<lotinfo_arm::TABLE_ITEM>(nullptr);
 }
 
-inline bool VerifySizePrefixedARM_RECORDBuffer(
+inline bool VerifySizePrefixedTABLE_ITEMBuffer(
     flatbuffers::Verifier &verifier) {
-  return verifier.VerifySizePrefixedBuffer<lotinfo_arm::ARM_RECORD>(nullptr);
+  return verifier.VerifySizePrefixedBuffer<lotinfo_arm::TABLE_ITEM>(nullptr);
 }
 
-inline void FinishARM_RECORDBuffer(
+inline void FinishTABLE_ITEMBuffer(
     flatbuffers::FlatBufferBuilder &fbb,
-    flatbuffers::Offset<lotinfo_arm::ARM_RECORD> root) {
+    flatbuffers::Offset<lotinfo_arm::TABLE_ITEM> root) {
   fbb.Finish(root);
 }
 
-inline void FinishSizePrefixedARM_RECORDBuffer(
+inline void FinishSizePrefixedTABLE_ITEMBuffer(
     flatbuffers::FlatBufferBuilder &fbb,
-    flatbuffers::Offset<lotinfo_arm::ARM_RECORD> root) {
+    flatbuffers::Offset<lotinfo_arm::TABLE_ITEM> root) {
   fbb.FinishSizePrefixed(root);
 }
 
