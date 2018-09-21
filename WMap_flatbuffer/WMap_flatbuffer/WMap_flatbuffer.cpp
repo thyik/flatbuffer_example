@@ -5,23 +5,64 @@
 #include "..\..\schema\mit_WMap_generated.h"
 #include "FbIni.h"
 #include "FbLotInfoArm.h"
+#include "MitFbMap.h"
+
+// for GetTickCount()
+#include "Windows.h"
+
+#include <iostream>
 
 using namespace MitWMap;
 void loadFlatbuffer();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    loadFlatbuffer();
+    //loadFlatbuffer();
+    CMitFbMap fbMitMap;
+    int nTotal = 800*800;
+    stMapInfo stInfo;
 
-    CFbIni fbIni;
+    stInfo.maxColRow.shX = 800;
+    stInfo.maxColRow.shY = 800;
 
-    fbIni.Save("D:\\Temp\\fbini.bin");
-    fbIni.Load("D:\\Temp\\fbini.bin");
+    std::vector<short> vecMap(nTotal);
 
-    CFbLotInfoArm fbLotInfoArm;
-    fbLotInfoArm.Save("D:\\Temp\\fblotinfo_arm.fbb");
-    fbLotInfoArm.Load("D:\\Temp\\fblotinfo_arm.fbb");
+    DWORD dwStart = GetTickCount();
 
+    for (int ni=0; ni<nTotal; ni++)
+    {
+        vecMap[ni] = (ni % 12);
+    }
+    //
+    std::cout << "generate map : " << GetTickCount() - dwStart << std::endl;
+    //
+    fbMitMap.SetInfo(stInfo);
+    //
+    dwStart = GetTickCount();
+    fbMitMap.WriteFbMap("D:\\Temp\\FbMap.fbm", vecMap);
+    std::cout << "write fbm : " << GetTickCount() - dwStart << std::endl;
+    
+    std::vector<short> vecLoadMap;
+
+    dwStart = GetTickCount();
+    fbMitMap.LoadFbMap("D:\\Temp\\FbMap.fbm", vecLoadMap);
+    std::cout << "read fbm : " << GetTickCount() - dwStart << std::endl;
+
+    dwStart = GetTickCount();
+    fbMitMap.WriteTextMap("D:\\Temp\\FbMap.map", vecLoadMap);
+    std::cout << "write fbm text : " << GetTickCount() - dwStart << std::endl;
+    //CFbIni fbIni;
+
+    //fbIni.Save("D:\\Temp\\fbini.bin");
+    //fbIni.Load("D:\\Temp\\fbini.bin");
+
+    //CFbLotInfoArm fbLotInfoArm;
+    //fbLotInfoArm.Save("D:\\Temp\\fblotinfo_arm.fbb");
+    //fbLotInfoArm.Load("D:\\Temp\\fblotinfo_arm.fbb");
+
+    int data;
+
+    std::cin >> data;
 	return 0;
 }
 

@@ -1,0 +1,42 @@
+// Example IDL file for our MitMAP's schema.
+namespace MitMAP;
+enum format:byte { Ascii = 1, Hex = 2 , Dec = 3 }
+
+struct stXY {
+  x:short;
+  y:short;
+}
+
+table MAP {
+  maxRow:short = 0;
+  maxCol:short = 0;
+  map:[short];  // Vector of short.
+  targetDie:[stXY];	// vector of struct
+  refDie:[stXY];	// vector of struct
+  refChipDir:short = 0;
+  refNotch:short = 0;
+  degRotated:short = 0;
+  dieSizeX:float = 0.0;
+  dieSizeY:float = 0.0;
+  dieGapX:float = 0.0;
+  dieGapY:float = 0.0;
+  edgeClearance:float = 5.0;
+  diameter:float = 200.0;
+  waferNum:string;
+  waferFab:string;
+  fabCode:string;
+  intCode:string;
+  lotNum:string;
+  device:string;
+  designId:string;
+  layout:string;
+  scribId:string;
+  scribLot:string;
+  mapId:short = 0;
+  startLoc:stXY;
+  nullBin:short = 0;
+  bincodeFormat:format = Ascii;
+
+}
+
+root_type MAP;
