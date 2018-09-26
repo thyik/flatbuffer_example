@@ -6,7 +6,9 @@
 #include "FbIni.h"
 #include "FbLotInfoArm.h"
 #include "MitFbMap.h"
+#include "MsgDecode.h"
 
+#include <atlstr.h>  
 // for GetTickCount()
 #include "Windows.h"
 
@@ -14,9 +16,36 @@
 
 using namespace MitWMap;
 void loadFlatbuffer();
+void LogError(const char* formatString, ...);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    MC_MSG_GRP mcTemp;
+
+
+    CMsgDecode decode;
+    std::string strPacket;
+    mcTemp.msgType = 1;
+    strcpy(mcTemp.byteMsg, "Test 123456789");
+    mcTemp.msgSize = strlen(mcTemp.byteMsg);
+
+    size_t size = 2*sizeof(int) + mcTemp.msgSize;
+    strPacket.append((char*)&mcTemp, size);
+    decode.appendPacket(strPacket);
+
+    mcTemp.msgType = 0;
+    strcpy(mcTemp.byteMsg, "Test 4567");
+    mcTemp.msgSize = strlen(mcTemp.byteMsg);
+    size = 2*sizeof(int) + mcTemp.msgSize;
+    strPacket.clear();
+    strPacket.append((char*)&mcTemp, size);
+    decode.appendPacket(strPacket);
+
+    MC_DATA msg;
+    decode.getMsg(msg);
+
+    decode.getMsg(msg);
+
     //loadFlatbuffer();
     CMitFbMap fbMitMap;
     int nTotal = 800*800;
@@ -60,10 +89,23 @@ int _tmain(int argc, _TCHAR* argv[])
     //fbLotInfoArm.Save("D:\\Temp\\fblotinfo_arm.fbb");
     //fbLotInfoArm.Load("D:\\Temp\\fblotinfo_arm.fbb");
 
+    LogError("Test Logger : %s", "Hello123\nHello2\nHello\n");
     int data;
 
     std::cin >> data;
 	return 0;
+}
+
+void LogError(const char* formatString, ...)
+{
+    va_list argList;
+    va_start(argList, formatString);
+    CString cMsg;
+    cMsg.FormatV(formatString, argList);
+    va_end(argList);
+
+    std::cout << cMsg.GetBuffer();
+
 }
 
 void loadFlatbuffer()
