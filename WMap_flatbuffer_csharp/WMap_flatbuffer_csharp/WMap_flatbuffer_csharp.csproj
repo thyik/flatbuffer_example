@@ -37,6 +37,10 @@
     <Reference Include="FlatBuffers">
       <HintPath>..\flatbuffers_lib\FlatBuffers.dll</HintPath>
     </Reference>
+    <Reference Include="Ini.Net, Version=1.0.5531.18665, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ini.net.1.1.0\lib\net20\Ini.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="MitWMap\format.cs" />
     <Compile Include="MitWMap\stXY.cs" />
     <Compile Include="MitWMap\WaferMap.cs" />
@@ -57,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

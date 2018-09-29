@@ -63,7 +63,7 @@ namespace WMap_flatbuffer_csharp
             }
 
 
-            filename = "D:\\Temp\\csharp.dat";
+            filename = @"D:\Temp\csharp.dat";
             // deserialize from file
             stream = File.OpenRead(filename);
             Console.WriteLine("Deserializing buffer");
@@ -76,24 +76,28 @@ namespace WMap_flatbuffer_csharp
             Console.WriteLine("LotId : " + loadMap.LotNum);
 
             // binary reader
-            filename = "D:\\Temp\\output.dat";
-            // deserialize from file
-            BinaryReader reader = new BinaryReader(File.Open(@"D:\\Temp\\output.dat", FileMode.Open));
+            //filename = @"D:\Temp\output.dat";
+            //// deserialize from file
+            //BinaryReader reader = new BinaryReader(File.Open(@"D:\Temp\output.dat", FileMode.Open));
       
-            int length = (int)reader.BaseStream.Length;
+            //int length = (int)reader.BaseStream.Length;
 
-            Console.WriteLine("binary read buffer");
-            byte[] loadbinbuf = reader.ReadBytes(length);
-            reader.Close();
+            //Console.WriteLine("binary read buffer");
+            //byte[] loadbinbuf = reader.ReadBytes(length);
+            //reader.Close();
 
-            var loadbinBytebuf = new ByteBuffer(loadbinbuf);
-            var loadbinMap = WaferMap.GetRootAsWaferMap(loadbinBytebuf);
+            //var loadbinBytebuf = new ByteBuffer(loadbinbuf);
+            //var loadbinMap = WaferMap.GetRootAsWaferMap(loadbinBytebuf);
 
-            Console.WriteLine("LotId : " + loadbinMap.LotNum);
-            for (int i = 0; i < loadbinMap.MapLength; i++)
-            {
-                Console.WriteLine(loadbinMap.Map(i).ToString());
-            }
+            //Console.WriteLine("LotId : " + loadbinMap.LotNum);
+            //for (int i = 0; i < loadbinMap.MapLength; i++)
+            //{
+            //    Console.WriteLine(loadbinMap.Map(i).ToString());
+            //}
+
+            var test = new CTestIni();
+
+            test.fn();
 
         }
     }
