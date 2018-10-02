@@ -99,6 +99,36 @@ namespace WMap_flatbuffer_csharp
 
             test.fn();
 
+
+            //
+            const int INT_SIZE = 4;
+            const int DBL_SIZE = sizeof(double);
+            double[] dblArray = { 1.999, 2.899, 3.933 };
+            int[] arr = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
+            byte[] byteData = new byte[INT_SIZE * 10];
+            byte[] byteDbl = new byte[DBL_SIZE * 3];
+
+            Buffer.BlockCopy(dblArray, 0, byteDbl, 0, DBL_SIZE * 3);
+            //Buffer.BlockCopy(arr, 0, byteData, 0, INT_SIZE * 10);
+            foreach (byte value in byteDbl)
+                Console.Write("{0}  ", value);
+
+            Console.Write("\n");
+
+            int[] outBuf = new int [10];
+            double[] dblBuf = new double[3];
+            //Buffer.BlockCopy(byteData, 0, outBuf, 0, INT_SIZE * 10);
+            Buffer.BlockCopy(byteDbl, 0, dblBuf, 0, DBL_SIZE * 3);
+            foreach (double value in dblBuf)
+                Console.Write("{0}  ", value);
+
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            ////
+            //watch.Restart();
+
         }
     }
 }
