@@ -22,7 +22,18 @@ namespace WMap_flatbuffer_csharp
             var wnum = (short)1;
             var lotid = builder.CreateString("LotWafer");
             var binFormat = format.Hex;
-            var data = new short[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+            var data = new short[] { 0, 10, 2, 3, 4, 5, 6, 7, 89, 9 };
+
+            ////
+            CMitFbMap fbWrite = new CMitFbMap();
+            var fbFilename = @"D:\Temp\csharp.fbm";
+
+            fbWrite.Write(fbFilename, data);
+
+            CMitFbMap fbRead = new CMitFbMap();
+            fbRead.Read(fbFilename);
+            ////
 
             var mapdata = WaferMap.CreateMapVector(builder, data);
 
@@ -40,7 +51,7 @@ namespace WMap_flatbuffer_csharp
 
             /// serialize to file
             /// 
-            var filename = "D:\\Temp\\csharp.dat";
+            var filename = @"D:\Temp\csharp.dat";
             FileStream stream = File.Create(filename);
             var formatter = new BinaryFormatter();
             Console.WriteLine("Serializing buffer");

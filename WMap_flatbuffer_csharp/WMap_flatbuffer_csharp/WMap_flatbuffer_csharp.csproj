@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="CMitFbMap.cs" />
     <Compile Include="MitWMap\format.cs" />
     <Compile Include="MitWMap\stXY.cs" />
     <Compile Include="MitWMap\WaferMap.cs" />
