@@ -13,6 +13,7 @@
 #include "Windows.h"
 
 #include <iostream>
+#include <sstream>
 
 using namespace MitWMap;
 void loadFlatbuffer();
@@ -20,8 +21,52 @@ void LogError(const char* formatString, ...);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    //
+    std::string strTmp;
+    size_t sizeStr = sizeof(strTmp);
+
+    CString csTestTmp;
+
+    unsigned short nValue=1;
+    std::string strTmp1 = "  65535";
+    std::istringstream iss(strTmp1);
+    iss >> nValue;
+
+    sizeStr = sizeof(csTestTmp);
+
+    csTestTmp = "1234566789";
+    sizeStr = sizeof(csTestTmp);
+
+    //int nA = std::stoi(strTmp);
+
+    std::vector<std::string> vecStrings;
+    std::vector<std::string> vecStringsTwo;
+
+    vecStrings.reserve(15);
+
+    vecStringsTwo.resize(15);
+
+    for (auto it = vecStringsTwo.begin();
+        it != vecStringsTwo.end();
+        ++it)
+    {
+        *it = "1";
+    }
+
+    vecStrings = vecStringsTwo;
+
+    vecStrings[0] = "123456789123456789123456789123456789123456789123456789";
+    sizeStr = sizeof(vecStrings[0]);
+
+    //
+    vecStrings[0].shrink_to_fit();
+    sizeStr = sizeof(vecStrings[0]);
+    ///
     MC_MSG_GRP mcTemp;
 
+    UINT inData = 9239193392923922;
+
+    int nSize = sizeof(UINT);
 
     CMsgDecode decode;
     std::string strPacket;

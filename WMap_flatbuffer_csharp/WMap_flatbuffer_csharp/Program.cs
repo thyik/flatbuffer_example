@@ -23,7 +23,7 @@ namespace WMap_flatbuffer_csharp
             var lotid = builder.CreateString("LotWafer");
             var binFormat = format.Hex;
 
-            var data = new short[] { 0, 10, 2, 3, 4, 5, 6, 7, 89, 9 };
+            var data = new short[] { 0, 10, 2, 3, 4, 5, 6, 7, 89, 9, 0, 10, 2, 3, 4, 5, 6, 7, 89, 9, 0, 10, 2, 3, 4, 5, 6, 7, 89, 9, 0, 10, 2, 3, 4, 5, 6, 7, 89, 9 };
 
             ////
             CMitFbMap fbWrite = new CMitFbMap();
@@ -140,6 +140,14 @@ namespace WMap_flatbuffer_csharp
             ////
             //watch.Restart();
 
+            string strData = "147968949055";
+            int val;
+            Int32.TryParse(strData, out val);
+            //int nData = System.Convert.ToInt32(strData);
+
+            string strName = "M2 Input X-Axis";
+
+            bool bStatus = strName.Contains("Input Y-Axis");
         }
     }
 }

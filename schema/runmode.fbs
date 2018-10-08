@@ -1,0 +1,11 @@
+// Example IDL file for our runmode's schema.
+namespace nsRunMode;
+
+enum eLngRunMode:short
+{
+    IN_RUN_MODE         ,
+    IN_MAINTENANCE_MODE ,
+    MSGID             ,
+	PADDING01,  
+    MAX_LNG_RUNMODE_ITEM   
+}
