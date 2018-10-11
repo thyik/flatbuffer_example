@@ -79,6 +79,7 @@
     <ClInclude Include="FbLotInfoArm.h" />
     <ClInclude Include="MitFbMap.h" />
     <ClInclude Include="MsgDecode.h" />
+    <ClInclude Include="RotateBenchmark.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -87,6 +88,7 @@
     <ClCompile Include="FbLotInfoArm.cpp" />
     <ClCompile Include="MitFbMap.cpp" />
     <ClCompile Include="MsgDecode.cpp" />
+    <ClCompile Include="RotateBenchmark.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

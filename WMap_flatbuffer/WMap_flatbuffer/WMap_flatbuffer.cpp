@@ -11,6 +11,7 @@
 #include <atlstr.h>  
 // for GetTickCount()
 #include "Windows.h"
+#include "RotateBenchmark.h"
 
 #include <iostream>
 #include <sstream>
@@ -21,6 +22,10 @@ void LogError(const char* formatString, ...);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+    CRotateBenchmark benchmark;
+    benchmark.Rotate90();
+
     //
     std::string strTmp;
     size_t sizeStr = sizeof(strTmp);
