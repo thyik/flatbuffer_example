@@ -1,0 +1,16 @@
+// Example IDL file for our turretINFO's schema.
+namespace turretINFO;
+
+struct stStnInfo {
+  row:short;
+  col:short;
+  result:short;
+  head:byte;
+  exist:byte;
+}
+
+table INFO {
+  turret:[stStnInfo];	// vector of struct
+}
+
+root_type INFO;

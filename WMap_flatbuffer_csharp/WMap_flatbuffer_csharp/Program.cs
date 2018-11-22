@@ -16,6 +16,8 @@ namespace WMap_flatbuffer_csharp
     {
         static void Main(string[] args)
         {
+            var byteData1 = new byte[0];
+
             var builder = new FlatBufferBuilder(1);
 
             var waferid = builder.CreateString("TestWafer");

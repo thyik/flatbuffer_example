@@ -12,6 +12,7 @@
 // for GetTickCount()
 #include "Windows.h"
 #include "RotateBenchmark.h"
+#include "FbTurretInfo.h"
 
 #include <iostream>
 #include <sstream>
@@ -141,6 +142,21 @@ int _tmain(int argc, _TCHAR* argv[])
 
     LogError("Test Logger : %s", "Hello123\nHello2\nHello\n");
     int data;
+
+
+    CFbTurretInfo fbTurret;
+    std::vector<turretINFO::stStnInfo> vecStn;
+    std::vector<turretINFO::stStnInfo> vecLoadStn;
+
+    vecStn.push_back(turretINFO::stStnInfo(1,2,3,4,0));
+    vecStn.push_back(turretINFO::stStnInfo(21,22,23,24,20));
+
+    fbTurret.Save("D:\\Temp\\PnP.fbi", vecStn);
+    fbTurret.Load("D:\\Temp\\PnP.fbi", vecLoadStn);
+
+    char szMem[100];
+    fbTurret.SaveToMem(szMem, vecStn);
+    fbTurret.LoadFromMem(szMem, vecLoadStn);
 
     std::cin >> data;
 	return 0;

@@ -77,6 +77,7 @@
   <ItemGroup>
     <ClInclude Include="FbIni.h" />
     <ClInclude Include="FbLotInfoArm.h" />
+    <ClInclude Include="FbTurretInfo.h" />
     <ClInclude Include="MitFbMap.h" />
     <ClInclude Include="MsgDecode.h" />
     <ClInclude Include="RotateBenchmark.h" />
@@ -86,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="FbIni.cpp" />
     <ClCompile Include="FbLotInfoArm.cpp" />
+    <ClCompile Include="FbTurretInfo.cpp" />
     <ClCompile Include="MitFbMap.cpp" />
     <ClCompile Include="MsgDecode.cpp" />
     <ClCompile Include="RotateBenchmark.cpp" />
