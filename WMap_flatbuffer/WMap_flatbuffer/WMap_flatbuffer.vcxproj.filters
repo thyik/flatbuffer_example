@@ -42,6 +42,9 @@
     <ClInclude Include="FbTurretInfo.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FbUltInfo.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -66,6 +69,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FbTurretInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FbUltInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,6 +13,7 @@
 #include "Windows.h"
 #include "RotateBenchmark.h"
 #include "FbTurretInfo.h"
+#include "FbUltInfo.h"
 
 #include <iostream>
 #include <sstream>
@@ -20,6 +21,17 @@
 using namespace MitWMap;
 void loadFlatbuffer();
 void LogError(const char* formatString, ...);
+void test2()
+{
+    int n = std::stoi(" ");
+}
+
+void testexception()
+{
+    test2();
+}
+
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -148,19 +160,55 @@ int _tmain(int argc, _TCHAR* argv[])
     std::vector<turretINFO::stStnInfo> vecStn;
     std::vector<turretINFO::stStnInfo> vecLoadStn;
 
-    vecStn.push_back(turretINFO::stStnInfo(1,2,3,4,0));
-    vecStn.push_back(turretINFO::stStnInfo(21,22,23,24,20));
+    vecStn.push_back(turretINFO::stStnInfo(1,2,3,4,0,turretINFO::stXYT()));
+    vecStn.push_back(turretINFO::stStnInfo(21,22,23,24,20,turretINFO::stXYT()));
 
     fbTurret.Save("D:\\Temp\\PnP.fbi", vecStn);
     fbTurret.Load("D:\\Temp\\PnP.fbi", vecLoadStn);
 
     char szMem[100];
-    fbTurret.SaveToMem(szMem, vecStn);
-    fbTurret.LoadFromMem(szMem, vecLoadStn);
+    
+    fbTurret.SaveToMem(szMem, 100, vecStn);
+    fbTurret.LoadFromMem(szMem, 100, vecLoadStn);
 
+    //
+    for (int i=0; i<2; i++)
+    {
+        try {
+            testexception();
+        }
+        catch (std::exception& e)//(...)
+        {
+            std::cout << e.what() << '\n';
+        }
+    }
+    std::cout << "end";
     std::cin >> data;
+
+
+    //// ultINFO
+    CFbUltInfo fbUlt;
+    std::vector<ultINFO::stUnit> vecUnits;
+    vecUnits.reserve(400);
+    vecUnits.push_back(ultINFO::stUnit(1,0,0,0,0,0,0,0,0,0,ultINFO::stXY(), ultINFO::stXY()));
+    vecUnits.push_back(ultINFO::stUnit(2,0,0,0,0,0,0,0,0,0,ultINFO::stXY(), ultINFO::stXY()));
+    vecUnits.push_back(ultINFO::stUnit(3,0,0,0,0,0,0,0,0,0,ultINFO::stXY(), ultINFO::stXY()));
+
+    fbUlt.Save("D:\\Temp\\TnR1.fbu", vecUnits);
+
+    std::vector<ultINFO::stUnit> vecLoadUnits;
+    fbUlt.Load("D:\\Temp\\TnR1.fbu", vecLoadUnits);
+    //
+    for (auto itUnit = vecLoadUnits.begin();
+        itUnit != vecLoadUnits.end();
+        ++itUnit)
+    {
+        std::cout << itUnit->goodDie() << std::endl;
+    }
+    ////
 	return 0;
 }
+
 
 void LogError(const char* formatString, ...)
 {

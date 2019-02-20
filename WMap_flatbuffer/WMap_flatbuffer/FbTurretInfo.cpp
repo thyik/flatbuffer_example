@@ -40,6 +40,12 @@ bool CFbTurretInfo::deserialize(std::string strFilename, std::unique_ptr<char>& 
     // using stream class
     std::ifstream infile;
     infile.open(strFilename, std::ios::binary | std::ios::in);
+    //
+    if (!infile.is_open())
+    {
+        return false;
+    }
+
     infile.seekg(0,std::ios::end);
     std::streamoff size = infile.tellg();
     infile.seekg(0,std::ios::beg);
@@ -90,7 +96,7 @@ bool CFbTurretInfo::Load(std::string strFilename, std::vector<turretINFO::stStnI
         itStn != filerecord->turret()->end();
         ++itStn, nStn++)
     {
-        vecStn.push_back(stStnInfo(itStn->head(), itStn->col(), itStn->row(), itStn->result(), itStn->exist()));
+        vecStn.push_back(stStnInfo(itStn->head(), itStn->col(), itStn->row(), itStn->result(), itStn->exist(), stXYT()));
         //
         //std::cout << "Stn " << nStn << std::endl;
         //std::cout << "Arm " << int(itStn->head()) << "; ";
@@ -151,7 +157,7 @@ bool CFbTurretInfo::LoadFromMem(char *pBaseMem, size_t size, std::vector<turretI
         itStn != filerecord->turret()->end();
         ++itStn, nStn++)
     {
-        vecStn.push_back(stStnInfo(itStn->head(), itStn->col(), itStn->row(), itStn->result(), itStn->exist()));
+        vecStn.push_back(stStnInfo(itStn->head(), itStn->col(), itStn->row(), itStn->result(), itStn->exist(), stXYT()));
         //
         //std::cout << "Stn " << nStn << std::endl;
         //std::cout << "Arm " << int(itStn->head()) << "; ";

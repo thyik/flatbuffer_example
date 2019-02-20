@@ -1,12 +1,20 @@
 // Example IDL file for our turretINFO's schema.
 namespace turretINFO;
 
+struct stXYT {
+  x:float;
+  y:float;
+  theta:float;
+}
+
 struct stStnInfo {
   row:short;
   col:short;
   result:short;
   head:byte;
-  exist:byte;
+  exist:bool;
+  
+  offset:stXYT;
 }
 
 table INFO {

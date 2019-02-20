@@ -1,0 +1,39 @@
+// Example IDL file for our ultINFO's schema.
+namespace ultINFO;
+
+struct stXY {
+  x:short;
+  y:short;
+}
+
+// Do not add premitive/non-scalar member here
+// Need to utilize memcpy for memory copy optimization
+struct stUnit {
+  // long type not workable. seems like alignment not suitable for 32-bit application
+  // long type : 64-bit
+  // int type  : 32-bit
+  goodDie:int = 0;
+  placedDie:int = 0;
+  // use short type : to avoid confusion converting from int8 (char) to int
+  flipper:short = 0;
+  pnp:short = 0;
+  //
+  pickForce:short = 0;
+  placeForce:short = 0;
+  purgeForce:short = 0;
+  //
+  bincode:short = 0;
+  rejcode:short = 0;
+  //
+  unitstate:uint = 0;  // max 32-bit respresentation
+  //
+  inCoor:stXY;
+  outCoor:stXY;  // option for output table
+}
+//
+
+table UltRoot {
+  unit:[stUnit];				// Vector of struct
+}
+
+root_type UltRoot;

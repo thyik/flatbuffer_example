@@ -1,0 +1,74 @@
+// Example IDL file for our MitULT's schema.
+namespace MitULT;
+
+struct stXY {
+  x:short;
+  y:short;
+}
+
+struct stfXY {
+  x:float;
+  y:float;
+}
+
+struct stfOFFSET {
+  x:float;
+  y:float;
+  a:float;
+}
+
+table ultVISION {
+  type:string;
+  dieId:string;
+  result:string;
+  datetime:string;
+  offset:stfOFFSET;
+}
+
+table ultLOT {
+  machine:string;
+  lotNum:string;
+  packageName:string;
+  recipeName:string;
+  shift:string;
+  operator:string;
+}
+
+table ultWAFER {
+  dieSize:stfXY;
+  notch:short = 0;
+  targetDie:[stXY];	// vector of struct
+  inputwaferId:string;
+  inputwafersize:float = 200.0;
+  inputmaxRowCol:stXY;
+  inputdieGap:stfXY;
+  outputwaferId:string;
+  outputwafersize:float = 200.0;
+  outputmaxRowCol:stXY;
+  outputdieGap:stfXY;
+}
+
+// Do not add premitive/non-scalar member here
+// Need to utilize memcpy for memory copy optimization
+table ultUNIT {
+  goodDie:long = 0;
+  placedDie:long = 0;
+  inputCoor:stXY;
+  outputCoor:stXY;
+  pnp:short = 0;
+  pickForce:short = 0;
+  placeForce:short = 0;
+  purgeForce:short = 0;
+  bincode:short = 0;
+  rejcode:short = 0;
+}
+//
+
+table ultOBJECT {
+  lotInfo:ultLOT;
+  waferInfo:ultWAFER;
+  map:[short];					// Vector of short
+  ult:[ultUNIT];				// Vector of tables
+}
+
+root_type ultOBJECT;

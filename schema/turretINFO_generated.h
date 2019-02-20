@@ -8,28 +8,59 @@
 
 namespace turretINFO {
 
+struct stXYT;
+
 struct stStnInfo;
 
 struct INFO;
 
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(2) stStnInfo FLATBUFFERS_FINAL_CLASS {
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stXYT FLATBUFFERS_FINAL_CLASS {
+ private:
+  float x_;
+  float y_;
+  float theta_;
+
+ public:
+  stXYT() {
+    memset(this, 0, sizeof(stXYT));
+  }
+  stXYT(float _x, float _y, float _theta)
+      : x_(flatbuffers::EndianScalar(_x)),
+        y_(flatbuffers::EndianScalar(_y)),
+        theta_(flatbuffers::EndianScalar(_theta)) {
+  }
+  float x() const {
+    return flatbuffers::EndianScalar(x_);
+  }
+  float y() const {
+    return flatbuffers::EndianScalar(y_);
+  }
+  float theta() const {
+    return flatbuffers::EndianScalar(theta_);
+  }
+};
+FLATBUFFERS_STRUCT_END(stXYT, 12);
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stStnInfo FLATBUFFERS_FINAL_CLASS {
  private:
   int16_t row_;
   int16_t col_;
   int16_t result_;
   int8_t head_;
-  int8_t exist_;
+  uint8_t exist_;
+  stXYT offset_;
 
  public:
   stStnInfo() {
     memset(this, 0, sizeof(stStnInfo));
   }
-  stStnInfo(int16_t _row, int16_t _col, int16_t _result, int8_t _head, int8_t _exist)
+  stStnInfo(int16_t _row, int16_t _col, int16_t _result, int8_t _head, bool _exist, const stXYT &_offset)
       : row_(flatbuffers::EndianScalar(_row)),
         col_(flatbuffers::EndianScalar(_col)),
         result_(flatbuffers::EndianScalar(_result)),
         head_(flatbuffers::EndianScalar(_head)),
-        exist_(flatbuffers::EndianScalar(_exist)) {
+        exist_(flatbuffers::EndianScalar(static_cast<uint8_t>(_exist))),
+        offset_(_offset) {
   }
   int16_t row() const {
     return flatbuffers::EndianScalar(row_);
@@ -43,11 +74,14 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(2) stStnInfo FLATBUFFERS_FINAL_CLASS {
   int8_t head() const {
     return flatbuffers::EndianScalar(head_);
   }
-  int8_t exist() const {
-    return flatbuffers::EndianScalar(exist_);
+  bool exist() const {
+    return flatbuffers::EndianScalar(exist_) != 0;
+  }
+  const stXYT &offset() const {
+    return offset_;
   }
 };
-FLATBUFFERS_STRUCT_END(stStnInfo, 8);
+FLATBUFFERS_STRUCT_END(stStnInfo, 20);
 
 struct INFO FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
