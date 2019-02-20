@@ -35,7 +35,7 @@ bool CFbTurretInfo::serialize(std::string strFilename, flatbuffers::FlatBufferBu
 }
 
 // read from file
-bool CFbTurretInfo::deserialize(std::string strFilename, std::unique_ptr<char>& fbbBuf)
+size_t CFbTurretInfo::deserialize(std::string strFilename, std::unique_ptr<char>& fbbBuf)
 {
     // using stream class
     std::ifstream infile;
@@ -43,7 +43,7 @@ bool CFbTurretInfo::deserialize(std::string strFilename, std::unique_ptr<char>& 
     //
     if (!infile.is_open())
     {
-        return false;
+        return 0;
     }
 
     infile.seekg(0,std::ios::end);
@@ -55,7 +55,7 @@ bool CFbTurretInfo::deserialize(std::string strFilename, std::unique_ptr<char>& 
     infile.read(fbbBuf.get(), size);
     infile.close();
 
-    return true;
+    return size;
 }
 
 bool CFbTurretInfo::Save(std::string strFilename, std::vector<turretINFO::stStnInfo> &vecStn)
@@ -78,8 +78,16 @@ bool CFbTurretInfo::Load(std::string strFilename, std::vector<turretINFO::stStnI
     std::unique_ptr<char> fbbBuf;
 
     // 1. deserialise file to buffer
-    if (!deserialize(strFilename, fbbBuf))
+    size_t size = deserialize(strFilename, fbbBuf);
+    if (size == 0)
     {
+        return false;
+    }
+
+    // verify buffer content is valid
+    if(!VerifyINFOBuffer(flatbuffers::Verifier((const uint8_t*)fbbBuf.get(), size)))
+    {
+        // invalid content
         return false;
     }
 
@@ -144,9 +152,14 @@ bool CFbTurretInfo::LoadFromMem(char *pBaseMem, size_t size, std::vector<turretI
     // 1. deserialise memory to buffer
     memcpy(fbbBuf.get(), (char*)pBaseMem, size);
 
+    // verify buffer content is valid
+    if(!VerifyINFOBuffer(flatbuffers::Verifier((const uint8_t*)fbbBuf.get(), size)))
+    {
+        // invalid content
+        return false;
+    }
     //
     auto filerecord = GetINFO(fbbBuf.get());
-
     if (filerecord->turret() == nullptr)  // no record
         return false;
 

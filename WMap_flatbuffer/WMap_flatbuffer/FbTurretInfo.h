@@ -18,7 +18,7 @@ public:
 
 private:
     bool serialize(std::string strFilename, flatbuffers::FlatBufferBuilder &fbb);
-    bool deserialize(std::string strFilename, std::unique_ptr<char>& fbbBuf);
+    size_t deserialize(std::string strFilename, std::unique_ptr<char>& fbbBuf);
 
 
 };

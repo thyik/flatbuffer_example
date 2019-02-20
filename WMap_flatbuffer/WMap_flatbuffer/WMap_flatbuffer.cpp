@@ -159,17 +159,22 @@ int _tmain(int argc, _TCHAR* argv[])
     CFbTurretInfo fbTurret;
     std::vector<turretINFO::stStnInfo> vecStn;
     std::vector<turretINFO::stStnInfo> vecLoadStn;
+#define MAX_ITEM 20
 
-    vecStn.push_back(turretINFO::stStnInfo(1,2,3,4,0,turretINFO::stXYT()));
-    vecStn.push_back(turretINFO::stStnInfo(21,22,23,24,20,turretINFO::stXYT()));
-
+    for (int nItem=0; nItem < MAX_ITEM; nItem++)
+    {
+        vecStn.push_back(turretINFO::stStnInfo(nItem,2,3,4,0,turretINFO::stXYT()));
+    //vecStn.push_back(turretINFO::stStnInfo(21,22,23,24,20,turretINFO::stXYT()));
+    }
     fbTurret.Save("D:\\Temp\\PnP.fbi", vecStn);
     fbTurret.Load("D:\\Temp\\PnP.fbi", vecLoadStn);
 
     char szMem[100];
     
-    fbTurret.SaveToMem(szMem, 100, vecStn);
-    fbTurret.LoadFromMem(szMem, 100, vecLoadStn);
+    if(fbTurret.SaveToMem(szMem, 100, vecStn))
+    {
+        fbTurret.LoadFromMem(szMem, 100, vecLoadStn);
+    }
 
     //
     for (int i=0; i<2; i++)
