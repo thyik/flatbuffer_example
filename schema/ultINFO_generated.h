@@ -8,11 +8,40 @@
 
 namespace ultINFO {
 
+struct stXYTheta;
+
 struct stXY;
 
-struct stUnit;
+struct IUnit;
 
 struct UltRoot;
+
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stXYTheta FLATBUFFERS_FINAL_CLASS {
+ private:
+  float x_;
+  float y_;
+  float theta_;
+
+ public:
+  stXYTheta() {
+    memset(this, 0, sizeof(stXYTheta));
+  }
+  stXYTheta(float _x, float _y, float _theta)
+      : x_(flatbuffers::EndianScalar(_x)),
+        y_(flatbuffers::EndianScalar(_y)),
+        theta_(flatbuffers::EndianScalar(_theta)) {
+  }
+  float x() const {
+    return flatbuffers::EndianScalar(x_);
+  }
+  float y() const {
+    return flatbuffers::EndianScalar(y_);
+  }
+  float theta() const {
+    return flatbuffers::EndianScalar(theta_);
+  }
+};
+FLATBUFFERS_STRUCT_END(stXYTheta, 12);
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(2) stXY FLATBUFFERS_FINAL_CLASS {
  private:
@@ -36,92 +65,273 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(2) stXY FLATBUFFERS_FINAL_CLASS {
 };
 FLATBUFFERS_STRUCT_END(stXY, 4);
 
-FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stUnit FLATBUFFERS_FINAL_CLASS {
- private:
-  int32_t goodDie_;
-  int32_t placedDie_;
-  int16_t flipper_;
-  int16_t pnp_;
-  int16_t pickForce_;
-  int16_t placeForce_;
-  int16_t purgeForce_;
-  int16_t bincode_;
-  int16_t rejcode_;
-  int16_t padding0__;
-  uint32_t unitstate_;
-  stXY inCoor_;
-  stXY outCoor_;
-
- public:
-  stUnit() {
-    memset(this, 0, sizeof(stUnit));
-  }
-  stUnit(int32_t _goodDie, int32_t _placedDie, int16_t _flipper, int16_t _pnp, int16_t _pickForce, int16_t _placeForce, int16_t _purgeForce, int16_t _bincode, int16_t _rejcode, uint32_t _unitstate, const stXY &_inCoor, const stXY &_outCoor)
-      : goodDie_(flatbuffers::EndianScalar(_goodDie)),
-        placedDie_(flatbuffers::EndianScalar(_placedDie)),
-        flipper_(flatbuffers::EndianScalar(_flipper)),
-        pnp_(flatbuffers::EndianScalar(_pnp)),
-        pickForce_(flatbuffers::EndianScalar(_pickForce)),
-        placeForce_(flatbuffers::EndianScalar(_placeForce)),
-        purgeForce_(flatbuffers::EndianScalar(_purgeForce)),
-        bincode_(flatbuffers::EndianScalar(_bincode)),
-        rejcode_(flatbuffers::EndianScalar(_rejcode)),
-        padding0__(0),
-        unitstate_(flatbuffers::EndianScalar(_unitstate)),
-        inCoor_(_inCoor),
-        outCoor_(_outCoor) {
-    (void)padding0__;
+struct IUnit FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  enum {
+    VT_LOTID = 4,
+    VT_GOODDIE = 6,
+    VT_PLACEDDIE = 8,
+    VT_FLIPPER = 10,
+    VT_PNP = 12,
+    VT_PICKFORCE = 14,
+    VT_PLACEFORCE = 16,
+    VT_PURGEFORCE = 18,
+    VT_BINCODE = 20,
+    VT_REJCODE = 22,
+    VT_UNITSTATE = 24,
+    VT_POSITION = 26,
+    VT_INWAFERID = 28,
+    VT_INCOOR = 30,
+    VT_OUTWAFERID = 32,
+    VT_OUTCOOR = 34,
+    VT_REEL = 36,
+    VT_REELPOCKET = 38
+  };
+  const flatbuffers::String *lotId() const {
+    return GetPointer<const flatbuffers::String *>(VT_LOTID);
   }
   int32_t goodDie() const {
-    return flatbuffers::EndianScalar(goodDie_);
+    return GetField<int32_t>(VT_GOODDIE, 0);
   }
   int32_t placedDie() const {
-    return flatbuffers::EndianScalar(placedDie_);
+    return GetField<int32_t>(VT_PLACEDDIE, 0);
   }
   int16_t flipper() const {
-    return flatbuffers::EndianScalar(flipper_);
+    return GetField<int16_t>(VT_FLIPPER, 0);
   }
   int16_t pnp() const {
-    return flatbuffers::EndianScalar(pnp_);
+    return GetField<int16_t>(VT_PNP, 0);
   }
   int16_t pickForce() const {
-    return flatbuffers::EndianScalar(pickForce_);
+    return GetField<int16_t>(VT_PICKFORCE, 0);
   }
   int16_t placeForce() const {
-    return flatbuffers::EndianScalar(placeForce_);
+    return GetField<int16_t>(VT_PLACEFORCE, 0);
   }
   int16_t purgeForce() const {
-    return flatbuffers::EndianScalar(purgeForce_);
+    return GetField<int16_t>(VT_PURGEFORCE, 0);
   }
   int16_t bincode() const {
-    return flatbuffers::EndianScalar(bincode_);
+    return GetField<int16_t>(VT_BINCODE, 0);
   }
   int16_t rejcode() const {
-    return flatbuffers::EndianScalar(rejcode_);
+    return GetField<int16_t>(VT_REJCODE, 0);
   }
   uint32_t unitstate() const {
-    return flatbuffers::EndianScalar(unitstate_);
+    return GetField<uint32_t>(VT_UNITSTATE, 0);
   }
-  const stXY &inCoor() const {
-    return inCoor_;
+  const stXYTheta *position() const {
+    return GetStruct<const stXYTheta *>(VT_POSITION);
   }
-  const stXY &outCoor() const {
-    return outCoor_;
+  const flatbuffers::String *inWaferid() const {
+    return GetPointer<const flatbuffers::String *>(VT_INWAFERID);
+  }
+  const stXY *inCoor() const {
+    return GetStruct<const stXY *>(VT_INCOOR);
+  }
+  const flatbuffers::String *outWaferid() const {
+    return GetPointer<const flatbuffers::String *>(VT_OUTWAFERID);
+  }
+  const stXY *outCoor() const {
+    return GetStruct<const stXY *>(VT_OUTCOOR);
+  }
+  uint8_t reel() const {
+    return GetField<uint8_t>(VT_REEL, 0);
+  }
+  uint32_t reelPocket() const {
+    return GetField<uint32_t>(VT_REELPOCKET, 0);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_LOTID) &&
+           verifier.VerifyString(lotId()) &&
+           VerifyField<int32_t>(verifier, VT_GOODDIE) &&
+           VerifyField<int32_t>(verifier, VT_PLACEDDIE) &&
+           VerifyField<int16_t>(verifier, VT_FLIPPER) &&
+           VerifyField<int16_t>(verifier, VT_PNP) &&
+           VerifyField<int16_t>(verifier, VT_PICKFORCE) &&
+           VerifyField<int16_t>(verifier, VT_PLACEFORCE) &&
+           VerifyField<int16_t>(verifier, VT_PURGEFORCE) &&
+           VerifyField<int16_t>(verifier, VT_BINCODE) &&
+           VerifyField<int16_t>(verifier, VT_REJCODE) &&
+           VerifyField<uint32_t>(verifier, VT_UNITSTATE) &&
+           VerifyField<stXYTheta>(verifier, VT_POSITION) &&
+           VerifyOffset(verifier, VT_INWAFERID) &&
+           verifier.VerifyString(inWaferid()) &&
+           VerifyField<stXY>(verifier, VT_INCOOR) &&
+           VerifyOffset(verifier, VT_OUTWAFERID) &&
+           verifier.VerifyString(outWaferid()) &&
+           VerifyField<stXY>(verifier, VT_OUTCOOR) &&
+           VerifyField<uint8_t>(verifier, VT_REEL) &&
+           VerifyField<uint32_t>(verifier, VT_REELPOCKET) &&
+           verifier.EndTable();
   }
 };
-FLATBUFFERS_STRUCT_END(stUnit, 36);
+
+struct IUnitBuilder {
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_lotId(flatbuffers::Offset<flatbuffers::String> lotId) {
+    fbb_.AddOffset(IUnit::VT_LOTID, lotId);
+  }
+  void add_goodDie(int32_t goodDie) {
+    fbb_.AddElement<int32_t>(IUnit::VT_GOODDIE, goodDie, 0);
+  }
+  void add_placedDie(int32_t placedDie) {
+    fbb_.AddElement<int32_t>(IUnit::VT_PLACEDDIE, placedDie, 0);
+  }
+  void add_flipper(int16_t flipper) {
+    fbb_.AddElement<int16_t>(IUnit::VT_FLIPPER, flipper, 0);
+  }
+  void add_pnp(int16_t pnp) {
+    fbb_.AddElement<int16_t>(IUnit::VT_PNP, pnp, 0);
+  }
+  void add_pickForce(int16_t pickForce) {
+    fbb_.AddElement<int16_t>(IUnit::VT_PICKFORCE, pickForce, 0);
+  }
+  void add_placeForce(int16_t placeForce) {
+    fbb_.AddElement<int16_t>(IUnit::VT_PLACEFORCE, placeForce, 0);
+  }
+  void add_purgeForce(int16_t purgeForce) {
+    fbb_.AddElement<int16_t>(IUnit::VT_PURGEFORCE, purgeForce, 0);
+  }
+  void add_bincode(int16_t bincode) {
+    fbb_.AddElement<int16_t>(IUnit::VT_BINCODE, bincode, 0);
+  }
+  void add_rejcode(int16_t rejcode) {
+    fbb_.AddElement<int16_t>(IUnit::VT_REJCODE, rejcode, 0);
+  }
+  void add_unitstate(uint32_t unitstate) {
+    fbb_.AddElement<uint32_t>(IUnit::VT_UNITSTATE, unitstate, 0);
+  }
+  void add_position(const stXYTheta *position) {
+    fbb_.AddStruct(IUnit::VT_POSITION, position);
+  }
+  void add_inWaferid(flatbuffers::Offset<flatbuffers::String> inWaferid) {
+    fbb_.AddOffset(IUnit::VT_INWAFERID, inWaferid);
+  }
+  void add_inCoor(const stXY *inCoor) {
+    fbb_.AddStruct(IUnit::VT_INCOOR, inCoor);
+  }
+  void add_outWaferid(flatbuffers::Offset<flatbuffers::String> outWaferid) {
+    fbb_.AddOffset(IUnit::VT_OUTWAFERID, outWaferid);
+  }
+  void add_outCoor(const stXY *outCoor) {
+    fbb_.AddStruct(IUnit::VT_OUTCOOR, outCoor);
+  }
+  void add_reel(uint8_t reel) {
+    fbb_.AddElement<uint8_t>(IUnit::VT_REEL, reel, 0);
+  }
+  void add_reelPocket(uint32_t reelPocket) {
+    fbb_.AddElement<uint32_t>(IUnit::VT_REELPOCKET, reelPocket, 0);
+  }
+  explicit IUnitBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  IUnitBuilder &operator=(const IUnitBuilder &);
+  flatbuffers::Offset<IUnit> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<IUnit>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<IUnit> CreateIUnit(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> lotId = 0,
+    int32_t goodDie = 0,
+    int32_t placedDie = 0,
+    int16_t flipper = 0,
+    int16_t pnp = 0,
+    int16_t pickForce = 0,
+    int16_t placeForce = 0,
+    int16_t purgeForce = 0,
+    int16_t bincode = 0,
+    int16_t rejcode = 0,
+    uint32_t unitstate = 0,
+    const stXYTheta *position = 0,
+    flatbuffers::Offset<flatbuffers::String> inWaferid = 0,
+    const stXY *inCoor = 0,
+    flatbuffers::Offset<flatbuffers::String> outWaferid = 0,
+    const stXY *outCoor = 0,
+    uint8_t reel = 0,
+    uint32_t reelPocket = 0) {
+  IUnitBuilder builder_(_fbb);
+  builder_.add_reelPocket(reelPocket);
+  builder_.add_outCoor(outCoor);
+  builder_.add_outWaferid(outWaferid);
+  builder_.add_inCoor(inCoor);
+  builder_.add_inWaferid(inWaferid);
+  builder_.add_position(position);
+  builder_.add_unitstate(unitstate);
+  builder_.add_placedDie(placedDie);
+  builder_.add_goodDie(goodDie);
+  builder_.add_lotId(lotId);
+  builder_.add_rejcode(rejcode);
+  builder_.add_bincode(bincode);
+  builder_.add_purgeForce(purgeForce);
+  builder_.add_placeForce(placeForce);
+  builder_.add_pickForce(pickForce);
+  builder_.add_pnp(pnp);
+  builder_.add_flipper(flipper);
+  builder_.add_reel(reel);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<IUnit> CreateIUnitDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *lotId = nullptr,
+    int32_t goodDie = 0,
+    int32_t placedDie = 0,
+    int16_t flipper = 0,
+    int16_t pnp = 0,
+    int16_t pickForce = 0,
+    int16_t placeForce = 0,
+    int16_t purgeForce = 0,
+    int16_t bincode = 0,
+    int16_t rejcode = 0,
+    uint32_t unitstate = 0,
+    const stXYTheta *position = 0,
+    const char *inWaferid = nullptr,
+    const stXY *inCoor = 0,
+    const char *outWaferid = nullptr,
+    const stXY *outCoor = 0,
+    uint8_t reel = 0,
+    uint32_t reelPocket = 0) {
+  return ultINFO::CreateIUnit(
+      _fbb,
+      lotId ? _fbb.CreateString(lotId) : 0,
+      goodDie,
+      placedDie,
+      flipper,
+      pnp,
+      pickForce,
+      placeForce,
+      purgeForce,
+      bincode,
+      rejcode,
+      unitstate,
+      position,
+      inWaferid ? _fbb.CreateString(inWaferid) : 0,
+      inCoor,
+      outWaferid ? _fbb.CreateString(outWaferid) : 0,
+      outCoor,
+      reel,
+      reelPocket);
+}
 
 struct UltRoot FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
     VT_UNIT = 4
   };
-  const flatbuffers::Vector<const stUnit *> *unit() const {
-    return GetPointer<const flatbuffers::Vector<const stUnit *> *>(VT_UNIT);
+  const flatbuffers::Vector<flatbuffers::Offset<IUnit>> *unit() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<IUnit>> *>(VT_UNIT);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_UNIT) &&
            verifier.VerifyVector(unit()) &&
+           verifier.VerifyVectorOfTables(unit()) &&
            verifier.EndTable();
   }
 };
@@ -129,7 +339,7 @@ struct UltRoot FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 struct UltRootBuilder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_unit(flatbuffers::Offset<flatbuffers::Vector<const stUnit *>> unit) {
+  void add_unit(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<IUnit>>> unit) {
     fbb_.AddOffset(UltRoot::VT_UNIT, unit);
   }
   explicit UltRootBuilder(flatbuffers::FlatBufferBuilder &_fbb)
@@ -146,7 +356,7 @@ struct UltRootBuilder {
 
 inline flatbuffers::Offset<UltRoot> CreateUltRoot(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::Vector<const stUnit *>> unit = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<IUnit>>> unit = 0) {
   UltRootBuilder builder_(_fbb);
   builder_.add_unit(unit);
   return builder_.Finish();
@@ -154,10 +364,10 @@ inline flatbuffers::Offset<UltRoot> CreateUltRoot(
 
 inline flatbuffers::Offset<UltRoot> CreateUltRootDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<stUnit> *unit = nullptr) {
+    const std::vector<flatbuffers::Offset<IUnit>> *unit = nullptr) {
   return ultINFO::CreateUltRoot(
       _fbb,
-      unit ? _fbb.CreateVectorOfStructs<stUnit>(*unit) : 0);
+      unit ? _fbb.CreateVector<flatbuffers::Offset<IUnit>>(*unit) : 0);
 }
 
 inline const ultINFO::UltRoot *GetUltRoot(const void *buf) {

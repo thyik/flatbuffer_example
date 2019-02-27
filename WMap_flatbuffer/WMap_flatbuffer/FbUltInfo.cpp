@@ -35,7 +35,7 @@ bool CFbUltInfo::serialize(std::string strFilename, flatbuffers::FlatBufferBuild
 }
 
 // read from file
-bool CFbUltInfo::deserialize(std::string strFilename, std::unique_ptr<char>& fbbBuf)
+size_t CFbUltInfo::deserialize(std::string strFilename, std::unique_ptr<char>& fbbBuf)
 {
     // using stream class
     std::ifstream infile;
@@ -43,7 +43,7 @@ bool CFbUltInfo::deserialize(std::string strFilename, std::unique_ptr<char>& fbb
 
     if (!infile.is_open())
     {
-        return false;
+        return 0;
     }
 
     infile.seekg(0,std::ios::end);
@@ -55,16 +55,103 @@ bool CFbUltInfo::deserialize(std::string strFilename, std::unique_ptr<char>& fbb
     infile.read(fbbBuf.get(), size);
     infile.close();
 
+    return size;
+}
+
+
+void CFbUltInfo::StartBuild(size_t size)
+{
+    m_vecOffsetUnits.clear();
+    m_vecOffsetUnits.reserve(size);
+
+    m_builder.Clear();
+}
+
+void CFbUltInfo::AddUnit(const stUnitDto &unit)
+{
+    // construct offset vector for fb
+
+    auto name1 = m_builder.CreateString(unit.lotId);
+    auto name2 = m_builder.CreateString(unit.inWaferid);
+    auto name3 = m_builder.CreateString(unit.outWaferid);
+    m_vecOffsetUnits.push_back(CreateIUnit(m_builder, 
+                name1,
+                unit.goodDie,
+                unit.placedDie,
+                unit.flipper,
+                unit.pnp,
+                unit.pickForce,
+                unit.placeForce,
+                unit.purgeForce,
+                unit.bincode,
+                unit.rejcode,
+                unit.unitstate,
+                &ultINFO::stXYTheta(unit.position.fX, unit.position.fY, unit.position.fTheta),  
+                name2,
+                &ultINFO::stXY(unit.inCoor.shX, unit.inCoor.shY),
+                name3,
+                &ultINFO::stXY(unit.outCoor.shX, unit.outCoor.shY)));
+}
+
+
+bool CFbUltInfo::Save(std::string strFilename)
+{
+   // 3. create records vector
+    auto r = m_builder.CreateVector(m_vecOffsetUnits);
+    //
+    //// create root table
+    auto s = CreateUltRoot(m_builder, r);
+    //
+
+    // complete flatbuffer buidling process
+    m_builder.Finish(s);
+
+    // 5. serialise flatbuffers to file
+    serialize(strFilename, m_builder);
     return true;
 }
 
-bool CFbUltInfo::Save(std::string strFilename, std::vector<ultINFO::stUnit> &vecUnits)
+bool CFbUltInfo::Save(std::string strFilename, std::vector<stUnitDto> &vecUnits)
 {
     flatbuffers::FlatBufferBuilder builder;
 
-    auto vecStruct = builder.CreateVectorOfStructs(vecUnits);
+    // construct offset vector for fb
+    std::vector<flatbuffers::Offset<IUnit>> vecOffsetUnits;
 
-    auto s = CreateUltRoot(builder, vecStruct);
+    vecOffsetUnits.reserve(vecUnits.size());
+
+    for (auto it = vecUnits.begin();
+        it != vecUnits.end();
+        ++it)
+    {
+        auto name1 = builder.CreateString(it->lotId);
+        auto name2 = builder.CreateString(it->inWaferid);
+        auto name3 = builder.CreateString(it->outWaferid);
+        vecOffsetUnits.push_back(CreateIUnit(builder, 
+                    name1,
+                    it->goodDie,
+                    it->placedDie,
+                    it->flipper,
+                    it->pnp,
+                    it->pickForce,
+                    it->placeForce,
+                    it->purgeForce,
+                    it->bincode,
+                    it->rejcode,
+                    it->unitstate,
+                    &ultINFO::stXYTheta(it->position.fX, it->position.fY, it->position.fTheta),  
+                    name2,
+                    &ultINFO::stXY(it->inCoor.shX, it->inCoor.shY),
+                    name3,
+                    &ultINFO::stXY(it->outCoor.shX, it->outCoor.shY)));
+    }
+    // 3. create records vector
+    auto r = builder.CreateVector(vecOffsetUnits);
+    
+    // create root table
+    auto s = CreateUltRoot(builder, r);
+    //
+
     // complete flatbuffer buidling process
     builder.Finish(s);
 
@@ -73,13 +160,22 @@ bool CFbUltInfo::Save(std::string strFilename, std::vector<ultINFO::stUnit> &vec
     return true;
 }
 
-bool CFbUltInfo::Load(std::string strFilename, std::vector<ultINFO::stUnit> &vecUnits)
+bool CFbUltInfo::Load(std::string strFilename, std::vector<stUnitDto> &vecUnits)
 {
     std::unique_ptr<char> fbbBuf;
 
     // 1. deserialise file to buffer
-    if (!deserialize(strFilename, fbbBuf))
+    size_t size = deserialize(strFilename, fbbBuf);
+
+    if (size == 0)
     {
+        return false;
+    }
+
+    // verify buffer content is valid
+    if(!VerifyUltRootBuffer(flatbuffers::Verifier((const uint8_t*)fbbBuf.get(), size)))
+    {
+        // invalid content
         return false;
     }
 
@@ -96,8 +192,8 @@ bool CFbUltInfo::Load(std::string strFilename, std::vector<ultINFO::stUnit> &vec
         itUnit != filerecord->unit()->end();
         ++itUnit)
     {
-        //vecUnits.push_back(ultINFO::stUnit());
-        vecUnits.push_back(ultINFO::stUnit(  itUnit->goodDie(), 
+        vecUnits.push_back(stUnitDto(  itUnit->lotId()->str(),
+                                    itUnit->goodDie(), 
                                     itUnit->placedDie(), 
                                     itUnit->flipper(), 
                                     itUnit->pnp(), 
@@ -107,30 +203,55 @@ bool CFbUltInfo::Load(std::string strFilename, std::vector<ultINFO::stUnit> &vec
                                     itUnit->bincode(), 
                                     itUnit->rejcode(), 
                                     itUnit->unitstate(),
-                                    itUnit->inCoor(), 
-                                    itUnit->outCoor()));
-        //
-        //std::cout << "Stn " << nStn << std::endl;
-        //std::cout << "Arm " << int(itStn->head()) << "; ";
-        //std::cout << "Col " << itStn->col() << "; ";
-        //std::cout << "Row " << itStn->row() << "; ";
-        //std::cout << "Result " << itStn->result() << "; ";
-        //std::cout << "Present " << int(itStn->exist()) << std::endl;
-
-        //std::cout << std::endl;
+                                    stXYThetaDto(itUnit->position()->x(), itUnit->position()->y(), itUnit->position()->theta()),
+                                    itUnit->inWaferid()->str(),
+                                    stXYDto(itUnit->inCoor()->x(), itUnit->inCoor()->y()), 
+                                    itUnit->outWaferid()->str(),
+                                    stXYDto(itUnit->outCoor()->x(), itUnit->outCoor()->y())));
     }
 
     return true;
 }
 
 //
-bool CFbUltInfo::SaveToMem(char *pBaseMem, size_t size, std::vector<ultINFO::stUnit> &vecUnits)
+bool CFbUltInfo::SaveToMem(char *pBaseMem, size_t size, std::vector<stUnitDto> &vecUnits)
 {
     flatbuffers::FlatBufferBuilder builder;
 
-    auto vecStruct = builder.CreateVectorOfStructs(vecUnits);
+   // construct offset vector for fb
+    std::vector<flatbuffers::Offset<IUnit>> vecOffsetUnits;
 
-    auto s = CreateUltRoot(builder, vecStruct);
+    vecOffsetUnits.reserve(vecUnits.size());
+
+    for (auto it = vecUnits.begin();
+        it != vecUnits.end();
+        ++it)
+    {
+        auto name1 = builder.CreateString(it->lotId);
+        auto name2 = builder.CreateString(it->inWaferid);
+        auto name3 = builder.CreateString(it->outWaferid);
+        vecOffsetUnits.push_back(CreateIUnit(builder, 
+                    name1,
+                    it->goodDie,
+                    it->placedDie,
+                    it->flipper,
+                    it->pnp,
+                    it->pickForce,
+                    it->placeForce,
+                    it->purgeForce,
+                    it->bincode,
+                    it->rejcode,
+                    it->unitstate,
+                    &ultINFO::stXYTheta(it->position.fX, it->position.fY, it->position.fTheta),  
+                    name2,
+                    &ultINFO::stXY(it->inCoor.shX, it->inCoor.shY),
+                    name3,
+                    &ultINFO::stXY(it->outCoor.shX, it->outCoor.shY)));
+    }
+    // 3. create records vector
+    auto r = builder.CreateVector(vecOffsetUnits);
+
+    auto s = CreateUltRoot(builder, r);
     // complete flatbuffer buidling process
     builder.Finish(s);
 
@@ -149,7 +270,7 @@ bool CFbUltInfo::SaveToMem(char *pBaseMem, size_t size, std::vector<ultINFO::stU
     return true;
 }
 
-bool CFbUltInfo::LoadFromMem(char *pBaseMem, size_t size, std::vector<ultINFO::stUnit> &vecUnits)
+bool CFbUltInfo::LoadFromMem(char *pBaseMem, size_t size, std::vector<stUnitDto> &vecUnits)
 {
     std::unique_ptr<char> fbbBuf;
     fbbBuf.reset(new char [size]);
@@ -168,8 +289,8 @@ bool CFbUltInfo::LoadFromMem(char *pBaseMem, size_t size, std::vector<ultINFO::s
         itUnit != filerecord->unit()->end();
         ++itUnit)
     {
-        //vecUnits.push_back(ultINFO::stUnit());
-        vecUnits.push_back(ultINFO::stUnit(  itUnit->goodDie(), 
+        vecUnits.push_back(stUnitDto(  itUnit->lotId()->str(),
+                                    itUnit->goodDie(), 
                                     itUnit->placedDie(), 
                                     itUnit->flipper(), 
                                     itUnit->pnp(), 
@@ -179,17 +300,12 @@ bool CFbUltInfo::LoadFromMem(char *pBaseMem, size_t size, std::vector<ultINFO::s
                                     itUnit->bincode(), 
                                     itUnit->rejcode(), 
                                     itUnit->unitstate(),
-                                    itUnit->inCoor(), 
-                                    itUnit->outCoor()));
-        //
-        //std::cout << "Stn " << nStn << std::endl;
-        //std::cout << "Arm " << int(itStn->head()) << "; ";
-        //std::cout << "Col " << itStn->col() << "; ";
-        //std::cout << "Row " << itStn->row() << "; ";
-        //std::cout << "Result " << itStn->result() << "; ";
-        //std::cout << "Present " << int(itStn->exist()) << std::endl;
+                                    stXYThetaDto(itUnit->position()->x(), itUnit->position()->y(), itUnit->position()->theta()),
+                                    itUnit->inWaferid()->str(),
+                                    stXYDto(itUnit->inCoor()->x(), itUnit->inCoor()->y()), 
+                                    itUnit->outWaferid()->str(),
+                                    stXYDto(itUnit->outCoor()->x(), itUnit->outCoor()->y())));
 
-        //std::cout << std::endl;
     }
 
     return true;

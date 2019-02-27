@@ -14,6 +14,7 @@
 #include "RotateBenchmark.h"
 #include "FbTurretInfo.h"
 #include "FbUltInfo.h"
+#include "MitFbUltMap1.h"
 
 #include <iostream>
 #include <sstream>
@@ -193,25 +194,133 @@ int _tmain(int argc, _TCHAR* argv[])
 
     //// ultINFO
     CFbUltInfo fbUlt;
-    std::vector<ultINFO::stUnit> vecUnits;
+    std::vector<stUnitDto> vecUnits;
     vecUnits.reserve(400);
-    vecUnits.push_back(ultINFO::stUnit(1,0,0,0,0,0,0,0,0,0,ultINFO::stXY(), ultINFO::stXY()));
-    vecUnits.push_back(ultINFO::stUnit(2,0,0,0,0,0,0,0,0,0,ultINFO::stXY(), ultINFO::stXY()));
-    vecUnits.push_back(ultINFO::stUnit(3,0,0,0,0,0,0,0,0,0,ultINFO::stXY(), ultINFO::stXY()));
+    vecUnits.push_back(stUnitDto("",1,0,0,0,0,0,0,0,0,0,stXYThetaDto(0,0,0),"",stXYDto(0,0),"",stXYDto(0,0)));
+    vecUnits.push_back(stUnitDto("",2,0,0,0,0,0,0,0,0,0,stXYThetaDto(0,0,0),"",stXYDto(0,0),"",stXYDto(0,0)));
+    vecUnits.push_back(stUnitDto("",3,0,0,0,0,0,0,0,0,0,stXYThetaDto(0,0,0),"",stXYDto(0,0),"",stXYDto(0,0)));
 
     fbUlt.Save("D:\\Temp\\TnR1.fbu", vecUnits);
 
-    std::vector<ultINFO::stUnit> vecLoadUnits;
+    std::vector<stUnitDto> vecLoadUnits;
     fbUlt.Load("D:\\Temp\\TnR1.fbu", vecLoadUnits);
     //
     for (auto itUnit = vecLoadUnits.begin();
         itUnit != vecLoadUnits.end();
         ++itUnit)
     {
-        std::cout << itUnit->goodDie() << std::endl;
+        std::cout << itUnit->goodDie << std::endl;
     }
+
+    //
+    fbUlt.StartBuild(3);
+    for (auto itUnit = vecLoadUnits.begin();
+        itUnit != vecLoadUnits.end();
+        ++itUnit)
+    {
+        fbUlt.AddUnit(*itUnit);
+    }
+
+    fbUlt.Save("D:\\Temp\\TnR1-1.fbu");
+
+    //
+    fbUlt.StartBuild(3);
+    for (auto itUnit = vecLoadUnits.begin();
+        itUnit != vecLoadUnits.end();
+        ++itUnit)
+    {
+        fbUlt.AddUnit(*itUnit);
+    }
+
+    fbUlt.Save("D:\\Temp\\TnR1-2.fbu");
+
+    //
+    std::vector<stUnitDto> vecLoad2Units;
+    fbUlt.Load("D:\\Temp\\TnR1-2.fbu", vecLoad2Units);
+    //
+    for (auto itUnit = vecLoad2Units.begin();
+        itUnit != vecLoad2Units.end();
+        ++itUnit)
+    {
+        std::cout << itUnit->goodDie << std::endl;
+    }
+
+    CMitFbUltMap1 testmap;
+
+    stLotInfo stTmpLotInfo;
+    stWaferInfo stTmpWaferInfo;
+
+    DWORD dwStartCnt = GetTickCount();
+    testmap.StartBuild(227 * 227);
+    testmap.LotData().strLotNum      = "Lot001";
+    testmap.LotData().strMachineId   = "Machine001";
+    testmap.LotData().strPackageName = "Package001";
+    testmap.LotData().strRecipeName  = "Recipe001";
+    testmap.LotData().strShift       = "Shift001";
+    testmap.LotData().strOperator    = "OperatorA";
+
+    testmap.AddLotInfo();
+    testmap.AddWaferInfo();
+
+    MitMapType::stUnitInfo unit(11,21,31,MitMapType::stRejCode(1,9,88), true);;
+    for (int ni=0; ni<227*227; ni++)
+    {
+        testmap.AddUnit(unit);
+    }
+    testmap.Write("D:\\Temp\\testUlt.fbu");
+    std::cout << "CMitFbUltMap1 creation " << (GetTickCount() - dwStartCnt) << std::endl;    testmap.StartBuild(227 * 227);
+
+    dwStartCnt = GetTickCount();
+    /// Init data
+    testmap.LotData().strLotNum      = "Lot002";
+    testmap.LotData().strMachineId   = "Machine002";
+    testmap.LotData().strPackageName = "Package002";
+    testmap.LotData().strRecipeName  = "Recipe002";
+    testmap.LotData().strShift       = "Shift002";
+    testmap.LotData().strOperator    = "OperatorA";
+    //
+    testmap.WaferData().dieSize      = MitMapType::stfXY(0.8, 0.8); 
+    testmap.WaferData().dieGap       = MitMapType::stfXY(0.05, 0.05);
+    testmap.WaferData().maxRowCol    = MitMapType::stXY(227, 227);
+    testmap.WaferData().fWaferSize   = 200.0;
+    testmap.WaferData().shNotch      = 0;
+    testmap.WaferData().strWaferId   = "Wafer001";
+    //
+    testmap.WaferData().targetDie.push_back(MitMapType::stXY(0,0));
+    testmap.WaferData().targetDie.push_back(MitMapType::stXY(10,10));
+    // 1. start builder
+    testmap.StartBuild(227 * 227);
+    // 2. add to builder
+    testmap.AddLotInfo();
+    // 3. add to builder
+    testmap.AddWaferInfo();
+    // 4. prepare units for build
+    unit = MitMapType::stUnitInfo(1,2,3,MitMapType::stRejCode(2,10,99), true);
+    for (int ni=0; ni<227*227; ni++)
+    {
+        testmap.AddUnit(unit);
+    }
+    // 5. complete the build and write to file
+    testmap.Write("D:\\Temp\\testUlt2.fbu");
+    std::cout << "CMitFbUltMap1 creation " << (GetTickCount() - dwStartCnt) << std::endl;
+ 
+
     ////
-	return 0;
+    CMitFbUltMap1 testmap1;
+    dwStartCnt = GetTickCount();
+    testmap1.Read("D:\\Temp\\testUlt.fbu");
+    //
+    std::vector<MitMapType::stUnitInfo> vecUltUnits;
+    testmap1.GetUnits(vecUltUnits);
+    std::cout << "CMitFbUltMap1 loading " << (GetTickCount() - dwStartCnt) << std::endl;
+    std::cout << testmap1.LotData().strLotNum << std::endl;
+
+    dwStartCnt = GetTickCount();
+    testmap1.Read("D:\\Temp\\testUlt2.fbu");
+    testmap1.GetUnits(vecUltUnits);
+    std::cout << "CMitFbUltMap1 loading " << (GetTickCount() - dwStartCnt) << std::endl;
+    std::cout << testmap1.LotData().strLotNum << std::endl;
+    return 0;
 }
 
 

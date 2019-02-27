@@ -1,14 +1,21 @@
 // Example IDL file for our ultINFO's schema.
 namespace ultINFO;
+struct stXYTheta {
+  x:float = 0.0;
+  y:float = 0.0;
+  theta:float = 0.0;
+}
 
 struct stXY {
-  x:short;
-  y:short;
+  x:short = 0;
+  y:short = 0;
 }
 
 // Do not add premitive/non-scalar member here
 // Need to utilize memcpy for memory copy optimization
-struct stUnit {
+table IUnit {
+  //
+  lotId:string;
   // long type not workable. seems like alignment not suitable for 32-bit application
   // long type : 64-bit
   // int type  : 32-bit
@@ -27,13 +34,22 @@ struct stUnit {
   //
   unitstate:uint = 0;  // max 32-bit respresentation
   //
+  position:stXYTheta;
+  //
+  inWaferid:string;
   inCoor:stXY;
+  
+  outWaferid:string;
   outCoor:stXY;  // option for output table
+  
+  // reel info
+  reel:ubyte;
+  reelPocket:uint; 
 }
 //
 
 table UltRoot {
-  unit:[stUnit];				// Vector of struct
+  unit:[IUnit];				// Vector of struct
 }
 
 root_type UltRoot;

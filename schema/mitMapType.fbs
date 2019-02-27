@@ -1,0 +1,91 @@
+// Example IDL file for our MitUltMap1's schema.
+// for C330
+namespace MitMapType;
+
+enum MapType : byte {
+	MAP_GENERIC = 0,
+	MAP_ULT_C330,
+	MAP_ULT_MR3
+}
+
+struct stXY {
+  x:short = 0;
+  y:short = 0;
+}
+
+struct stfXY {
+  x:float = 0.0;
+  y:float = 0.0;
+}
+
+struct stfOFFSET {
+  x:float = 0.0;
+  y:float = 0.0;
+  a:float = 0.0;
+}
+
+struct stRejCode {
+  pc:ubyte = 0;  // cater for 0-10
+  app:ubyte = 0; // cater for 0-15
+  code:ubyte = 0; // cater for 0-99
+}
+
+// Do not add premitive/non-scalar member here
+// Need to utilize memcpy for memory copy optimization
+struct stUnitInfo {
+  pocket:int = 0;  // align data from big to small to avoid padding insertion
+  reel:short = 0;  // cater for max 99999
+  bincode:short = 0; // bin 0 - 999
+  rejcode:stRejCode;
+  valid:bool = false; // cater for indication of valid die (eg. within wafer)
+ 
+}
+
+// For MR3
+table TblUnitInfo2 {
+  pocket:int = 0;  // align data from big to small to avoid padding insertion
+  reel:short = 0;  // cater for max 99999
+  bincode:short = 0; // bin 0 - 999
+  rejcode:stRejCode;
+  valid:bool = false; // cater for indication of valid die (eg. within wafer)
+  //
+  inwaferid:string;
+  inwaferCoor:stXY;
+  
+  outwaferid:string;
+  outwaferCoor:stXY;
+ 
+}
+//
+table TblLotInfo {
+  machine:string;
+  lotNum:string;
+  packageName:string;
+  recipeName:string;
+  shift:string;
+  operator:string;
+}
+
+table TblWaferInfo {
+  dieSize:stfXY;
+  notch:short = 0;
+  targetDie:[stXY];	// vector of struct
+  waferId:string;
+  wafersize:float = 200.0;
+  maxRowCol:stXY;
+  dieGap:stfXY;
+}
+
+table MapRoot {
+  type:MapType = MAP_ULT_C330;   // cater to indicate map type
+  lotInfo:TblLotInfo;
+  waferInfo:TblWaferInfo;
+  //
+  unit:[short];                 // Vector of short (Generic map)
+  //
+  ult:[stUnitInfo];				// Vector of struct (C330 ult map)
+  //
+  ult2:[TblUnitInfo2];			// Vector of Table (MR2 ult tracking)
+}
+
+root_type MapRoot;
