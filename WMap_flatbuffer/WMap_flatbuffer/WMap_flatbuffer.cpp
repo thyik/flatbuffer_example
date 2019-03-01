@@ -14,7 +14,7 @@
 #include "RotateBenchmark.h"
 #include "FbTurretInfo.h"
 #include "FbUltInfo.h"
-#include "MitFbUltMap1.h"
+#include "MitFbMapType1.h"
 
 #include <iostream>
 #include <sstream>
@@ -245,10 +245,7 @@ int _tmain(int argc, _TCHAR* argv[])
         std::cout << itUnit->goodDie << std::endl;
     }
 
-    CMitFbUltMap1 testmap;
-
-    stLotInfo stTmpLotInfo;
-    stWaferInfo stTmpWaferInfo;
+    CMitFbMapType1 testmap;
 
     DWORD dwStartCnt = GetTickCount();
     testmap.StartBuild(227 * 227);
@@ -268,7 +265,7 @@ int _tmain(int argc, _TCHAR* argv[])
         testmap.AddUnit(unit);
     }
     testmap.Write("D:\\Temp\\testUlt.fbu");
-    std::cout << "CMitFbUltMap1 creation " << (GetTickCount() - dwStartCnt) << std::endl;    testmap.StartBuild(227 * 227);
+    std::cout << "CMitFbMapType1 creation " << (GetTickCount() - dwStartCnt) << std::endl;    testmap.StartBuild(227 * 227);
 
     dwStartCnt = GetTickCount();
     /// Init data
@@ -302,23 +299,23 @@ int _tmain(int argc, _TCHAR* argv[])
     }
     // 5. complete the build and write to file
     testmap.Write("D:\\Temp\\testUlt2.fbu");
-    std::cout << "CMitFbUltMap1 creation " << (GetTickCount() - dwStartCnt) << std::endl;
+    std::cout << "CMitFbMapType1 creation " << (GetTickCount() - dwStartCnt) << std::endl;
  
 
     ////
-    CMitFbUltMap1 testmap1;
+    CMitFbMapType1 testmap1;
     dwStartCnt = GetTickCount();
     testmap1.Read("D:\\Temp\\testUlt.fbu");
     //
     std::vector<MitMapType::stUnitInfo> vecUltUnits;
     testmap1.GetUnits(vecUltUnits);
-    std::cout << "CMitFbUltMap1 loading " << (GetTickCount() - dwStartCnt) << std::endl;
+    std::cout << "CMitFbMapType1 loading " << (GetTickCount() - dwStartCnt) << std::endl;
     std::cout << testmap1.LotData().strLotNum << std::endl;
 
     dwStartCnt = GetTickCount();
     testmap1.Read("D:\\Temp\\testUlt2.fbu");
     testmap1.GetUnits(vecUltUnits);
-    std::cout << "CMitFbUltMap1 loading " << (GetTickCount() - dwStartCnt) << std::endl;
+    std::cout << "CMitFbMapType1 loading " << (GetTickCount() - dwStartCnt) << std::endl;
     std::cout << testmap1.LotData().strLotNum << std::endl;
     return 0;
 }

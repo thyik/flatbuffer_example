@@ -5,7 +5,8 @@ namespace MitMapType;
 enum MapType : byte {
 	MAP_GENERIC = 0,
 	MAP_ULT_C330,
-	MAP_ULT_MR3
+	MAP_ULT_MR3,
+	MAP_ULT_MR3_TBL_FMT,
 }
 
 struct stXY {
@@ -41,21 +42,44 @@ struct stUnitInfo {
  
 }
 
+// MR3 : optimize to use struct
+struct stUnitInfo2 {
+  goodDie:int = 0; 
+  placedDie:int = 0;
+  bincode:short = 0; 		// bin 0 - 999
+  rejcode:stRejCode;
+  valid:bool = false;   // cater for indication of valid die (eg. within wafer)
+  
+  // pnp #, flipper# etc
+  pnp:ubyte;   			
+  
+  //pick, place, purge, etc
+  pickForce:short; 	
+  placeForce:short;
+  purgeForce:short;
+  //
+  inwaferCoor:stXY;
+  outwaferCoor:stXY;
+}
+
 // For MR3
 table TblUnitInfo2 {
-  pocket:int = 0;  // align data from big to small to avoid padding insertion
-  reel:short = 0;  // cater for max 99999
-  bincode:short = 0; // bin 0 - 999
+  goodDie:int = 0; 
+  placedDie:int = 0;
+  bincode:short = 0; 		// bin 0 - 999
   rejcode:stRejCode;
-  valid:bool = false; // cater for indication of valid die (eg. within wafer)
-  //
-  inwaferid:string;
-  inwaferCoor:stXY;
+  valid:bool = false; 		// cater for indication of valid die (eg. within wafer)
   
-  outwaferid:string;
+  pnp:ubyte;   			// pnp #, flipper# etc
+  //
+  pickForce:short; 	    //pick, place, purge, etc
+  placeForce:short; 	//pick, place, purge, etc
+  purgeForce:short; 	//pick, place, purge, etc
+  //
+  inwaferCoor:stXY;
   outwaferCoor:stXY;
- 
 }
+
 //
 table TblLotInfo {
   machine:string;
@@ -85,7 +109,10 @@ table MapRoot {
   //
   ult:[stUnitInfo];				// Vector of struct (C330 ult map)
   //
-  ult2:[TblUnitInfo2];			// Vector of Table (MR2 ult tracking)
+  ult2:[stUnitInfo2];			// Vector of struct (MR3 ult tracking)
+  //
+  // option : flexible to add vector item at the expense of performance & storage
+  TblUlt2:[TblUnitInfo2];          // Vector of Table (MR3 ult tracking)
 }
 
 root_type MapRoot;

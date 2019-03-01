@@ -45,7 +45,16 @@
     <ClInclude Include="FbUltInfo.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="MitFbUltMap1.h">
+    <ClInclude Include="MitFbMapType1.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IMitFbMapType.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MitFbMapType2.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MitFbMapType2TblFmt.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,10 +83,19 @@
     <ClCompile Include="FbUltInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MitFbUltMap1.cpp">
+    <ClCompile Include="MitFbMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MitFbMap.cpp">
+    <ClCompile Include="MitFbMapType1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IMitFbMapType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MitFbMapType2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MitFbMapType2TblFmt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

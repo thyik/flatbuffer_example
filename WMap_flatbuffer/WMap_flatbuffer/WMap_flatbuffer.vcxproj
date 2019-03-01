@@ -79,8 +79,11 @@
     <ClInclude Include="FbLotInfoArm.h" />
     <ClInclude Include="FbTurretInfo.h" />
     <ClInclude Include="FbUltInfo.h" />
+    <ClInclude Include="IMitFbMapType.h" />
     <ClInclude Include="MitFbMap.h" />
-    <ClInclude Include="MitFbUltMap1.h" />
+    <ClInclude Include="MitFbMapType1.h" />
+    <ClInclude Include="MitFbMapType2.h" />
+    <ClInclude Include="MitFbMapType2TblFmt.h" />
     <ClInclude Include="MsgDecode.h" />
     <ClInclude Include="RotateBenchmark.h" />
     <ClInclude Include="stdafx.h" />
@@ -91,8 +94,11 @@
     <ClCompile Include="FbLotInfoArm.cpp" />
     <ClCompile Include="FbTurretInfo.cpp" />
     <ClCompile Include="FbUltInfo.cpp" />
+    <ClCompile Include="IMitFbMapType.cpp" />
     <ClCompile Include="MitFbMap.cpp" />
-    <ClCompile Include="MitFbUltMap1.cpp" />
+    <ClCompile Include="MitFbMapType1.cpp" />
+    <ClCompile Include="MitFbMapType2.cpp" />
+    <ClCompile Include="MitFbMapType2TblFmt.cpp" />
     <ClCompile Include="MsgDecode.cpp" />
     <ClCompile Include="RotateBenchmark.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -18,6 +18,8 @@ struct stRejCode;
 
 struct stUnitInfo;
 
+struct stUnitInfo2;
+
 struct TblUnitInfo2;
 
 struct TblLotInfo;
@@ -30,15 +32,17 @@ enum MapType {
   MapType_MAP_GENERIC = 0,
   MapType_MAP_ULT_C330 = 1,
   MapType_MAP_ULT_MR3 = 2,
+  MapType_MAP_ULT_MR3_TBL_FMT = 3,
   MapType_MIN = MapType_MAP_GENERIC,
-  MapType_MAX = MapType_MAP_ULT_MR3
+  MapType_MAX = MapType_MAP_ULT_MR3_TBL_FMT
 };
 
-inline const MapType (&EnumValuesMapType())[3] {
+inline const MapType (&EnumValuesMapType())[4] {
   static const MapType values[] = {
     MapType_MAP_GENERIC,
     MapType_MAP_ULT_C330,
-    MapType_MAP_ULT_MR3
+    MapType_MAP_ULT_MR3,
+    MapType_MAP_ULT_MR3_TBL_FMT
   };
   return values;
 }
@@ -48,6 +52,7 @@ inline const char * const *EnumNamesMapType() {
     "MAP_GENERIC",
     "MAP_ULT_C330",
     "MAP_ULT_MR3",
+    "MAP_ULT_MR3_TBL_FMT",
     nullptr
   };
   return names;
@@ -193,23 +198,98 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stUnitInfo FLATBUFFERS_FINAL_CLASS {
 };
 FLATBUFFERS_STRUCT_END(stUnitInfo, 12);
 
+FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) stUnitInfo2 FLATBUFFERS_FINAL_CLASS {
+ private:
+  int32_t goodDie_;
+  int32_t placedDie_;
+  int16_t bincode_;
+  stRejCode rejcode_;
+  uint8_t valid_;
+  uint8_t pnp_;
+  int8_t padding0__;
+  int16_t pickForce_;
+  int16_t placeForce_;
+  int16_t purgeForce_;
+  stXY inwaferCoor_;
+  stXY outwaferCoor_;
+  int16_t padding1__;
+
+ public:
+  stUnitInfo2() {
+    memset(this, 0, sizeof(stUnitInfo2));
+  }
+  stUnitInfo2(int32_t _goodDie, int32_t _placedDie, int16_t _bincode, const stRejCode &_rejcode, bool _valid, uint8_t _pnp, int16_t _pickForce, int16_t _placeForce, int16_t _purgeForce, const stXY &_inwaferCoor, const stXY &_outwaferCoor)
+      : goodDie_(flatbuffers::EndianScalar(_goodDie)),
+        placedDie_(flatbuffers::EndianScalar(_placedDie)),
+        bincode_(flatbuffers::EndianScalar(_bincode)),
+        rejcode_(_rejcode),
+        valid_(flatbuffers::EndianScalar(static_cast<uint8_t>(_valid))),
+        pnp_(flatbuffers::EndianScalar(_pnp)),
+        padding0__(0),
+        pickForce_(flatbuffers::EndianScalar(_pickForce)),
+        placeForce_(flatbuffers::EndianScalar(_placeForce)),
+        purgeForce_(flatbuffers::EndianScalar(_purgeForce)),
+        inwaferCoor_(_inwaferCoor),
+        outwaferCoor_(_outwaferCoor),
+        padding1__(0) {
+    (void)padding0__;
+    (void)padding1__;
+  }
+  int32_t goodDie() const {
+    return flatbuffers::EndianScalar(goodDie_);
+  }
+  int32_t placedDie() const {
+    return flatbuffers::EndianScalar(placedDie_);
+  }
+  int16_t bincode() const {
+    return flatbuffers::EndianScalar(bincode_);
+  }
+  const stRejCode &rejcode() const {
+    return rejcode_;
+  }
+  bool valid() const {
+    return flatbuffers::EndianScalar(valid_) != 0;
+  }
+  uint8_t pnp() const {
+    return flatbuffers::EndianScalar(pnp_);
+  }
+  int16_t pickForce() const {
+    return flatbuffers::EndianScalar(pickForce_);
+  }
+  int16_t placeForce() const {
+    return flatbuffers::EndianScalar(placeForce_);
+  }
+  int16_t purgeForce() const {
+    return flatbuffers::EndianScalar(purgeForce_);
+  }
+  const stXY &inwaferCoor() const {
+    return inwaferCoor_;
+  }
+  const stXY &outwaferCoor() const {
+    return outwaferCoor_;
+  }
+};
+FLATBUFFERS_STRUCT_END(stUnitInfo2, 32);
+
 struct TblUnitInfo2 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum {
-    VT_POCKET = 4,
-    VT_REEL = 6,
+    VT_GOODDIE = 4,
+    VT_PLACEDDIE = 6,
     VT_BINCODE = 8,
     VT_REJCODE = 10,
     VT_VALID = 12,
-    VT_INWAFERID = 14,
-    VT_INWAFERCOOR = 16,
-    VT_OUTWAFERID = 18,
-    VT_OUTWAFERCOOR = 20
+    VT_PNP = 14,
+    VT_PICKFORCE = 16,
+    VT_PLACEFORCE = 18,
+    VT_PURGEFORCE = 20,
+    VT_INWAFERCOOR = 22,
+    VT_OUTWAFERCOOR = 24
   };
-  int32_t pocket() const {
-    return GetField<int32_t>(VT_POCKET, 0);
+  int32_t goodDie() const {
+    return GetField<int32_t>(VT_GOODDIE, 0);
   }
-  int16_t reel() const {
-    return GetField<int16_t>(VT_REEL, 0);
+  int32_t placedDie() const {
+    return GetField<int32_t>(VT_PLACEDDIE, 0);
   }
   int16_t bincode() const {
     return GetField<int16_t>(VT_BINCODE, 0);
@@ -220,30 +300,36 @@ struct TblUnitInfo2 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   bool valid() const {
     return GetField<uint8_t>(VT_VALID, 0) != 0;
   }
-  const flatbuffers::String *inwaferid() const {
-    return GetPointer<const flatbuffers::String *>(VT_INWAFERID);
+  uint8_t pnp() const {
+    return GetField<uint8_t>(VT_PNP, 0);
+  }
+  int16_t pickForce() const {
+    return GetField<int16_t>(VT_PICKFORCE, 0);
+  }
+  int16_t placeForce() const {
+    return GetField<int16_t>(VT_PLACEFORCE, 0);
+  }
+  int16_t purgeForce() const {
+    return GetField<int16_t>(VT_PURGEFORCE, 0);
   }
   const stXY *inwaferCoor() const {
     return GetStruct<const stXY *>(VT_INWAFERCOOR);
-  }
-  const flatbuffers::String *outwaferid() const {
-    return GetPointer<const flatbuffers::String *>(VT_OUTWAFERID);
   }
   const stXY *outwaferCoor() const {
     return GetStruct<const stXY *>(VT_OUTWAFERCOOR);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int32_t>(verifier, VT_POCKET) &&
-           VerifyField<int16_t>(verifier, VT_REEL) &&
+           VerifyField<int32_t>(verifier, VT_GOODDIE) &&
+           VerifyField<int32_t>(verifier, VT_PLACEDDIE) &&
            VerifyField<int16_t>(verifier, VT_BINCODE) &&
            VerifyField<stRejCode>(verifier, VT_REJCODE) &&
            VerifyField<uint8_t>(verifier, VT_VALID) &&
-           VerifyOffset(verifier, VT_INWAFERID) &&
-           verifier.VerifyString(inwaferid()) &&
+           VerifyField<uint8_t>(verifier, VT_PNP) &&
+           VerifyField<int16_t>(verifier, VT_PICKFORCE) &&
+           VerifyField<int16_t>(verifier, VT_PLACEFORCE) &&
+           VerifyField<int16_t>(verifier, VT_PURGEFORCE) &&
            VerifyField<stXY>(verifier, VT_INWAFERCOOR) &&
-           VerifyOffset(verifier, VT_OUTWAFERID) &&
-           verifier.VerifyString(outwaferid()) &&
            VerifyField<stXY>(verifier, VT_OUTWAFERCOOR) &&
            verifier.EndTable();
   }
@@ -252,11 +338,11 @@ struct TblUnitInfo2 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
 struct TblUnitInfo2Builder {
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_pocket(int32_t pocket) {
-    fbb_.AddElement<int32_t>(TblUnitInfo2::VT_POCKET, pocket, 0);
+  void add_goodDie(int32_t goodDie) {
+    fbb_.AddElement<int32_t>(TblUnitInfo2::VT_GOODDIE, goodDie, 0);
   }
-  void add_reel(int16_t reel) {
-    fbb_.AddElement<int16_t>(TblUnitInfo2::VT_REEL, reel, 0);
+  void add_placedDie(int32_t placedDie) {
+    fbb_.AddElement<int32_t>(TblUnitInfo2::VT_PLACEDDIE, placedDie, 0);
   }
   void add_bincode(int16_t bincode) {
     fbb_.AddElement<int16_t>(TblUnitInfo2::VT_BINCODE, bincode, 0);
@@ -267,14 +353,20 @@ struct TblUnitInfo2Builder {
   void add_valid(bool valid) {
     fbb_.AddElement<uint8_t>(TblUnitInfo2::VT_VALID, static_cast<uint8_t>(valid), 0);
   }
-  void add_inwaferid(flatbuffers::Offset<flatbuffers::String> inwaferid) {
-    fbb_.AddOffset(TblUnitInfo2::VT_INWAFERID, inwaferid);
+  void add_pnp(uint8_t pnp) {
+    fbb_.AddElement<uint8_t>(TblUnitInfo2::VT_PNP, pnp, 0);
+  }
+  void add_pickForce(int16_t pickForce) {
+    fbb_.AddElement<int16_t>(TblUnitInfo2::VT_PICKFORCE, pickForce, 0);
+  }
+  void add_placeForce(int16_t placeForce) {
+    fbb_.AddElement<int16_t>(TblUnitInfo2::VT_PLACEFORCE, placeForce, 0);
+  }
+  void add_purgeForce(int16_t purgeForce) {
+    fbb_.AddElement<int16_t>(TblUnitInfo2::VT_PURGEFORCE, purgeForce, 0);
   }
   void add_inwaferCoor(const stXY *inwaferCoor) {
     fbb_.AddStruct(TblUnitInfo2::VT_INWAFERCOOR, inwaferCoor);
-  }
-  void add_outwaferid(flatbuffers::Offset<flatbuffers::String> outwaferid) {
-    fbb_.AddOffset(TblUnitInfo2::VT_OUTWAFERID, outwaferid);
   }
   void add_outwaferCoor(const stXY *outwaferCoor) {
     fbb_.AddStruct(TblUnitInfo2::VT_OUTWAFERCOOR, outwaferCoor);
@@ -293,50 +385,30 @@ struct TblUnitInfo2Builder {
 
 inline flatbuffers::Offset<TblUnitInfo2> CreateTblUnitInfo2(
     flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t pocket = 0,
-    int16_t reel = 0,
+    int32_t goodDie = 0,
+    int32_t placedDie = 0,
     int16_t bincode = 0,
     const stRejCode *rejcode = 0,
     bool valid = false,
-    flatbuffers::Offset<flatbuffers::String> inwaferid = 0,
+    uint8_t pnp = 0,
+    int16_t pickForce = 0,
+    int16_t placeForce = 0,
+    int16_t purgeForce = 0,
     const stXY *inwaferCoor = 0,
-    flatbuffers::Offset<flatbuffers::String> outwaferid = 0,
     const stXY *outwaferCoor = 0) {
   TblUnitInfo2Builder builder_(_fbb);
   builder_.add_outwaferCoor(outwaferCoor);
-  builder_.add_outwaferid(outwaferid);
   builder_.add_inwaferCoor(inwaferCoor);
-  builder_.add_inwaferid(inwaferid);
   builder_.add_rejcode(rejcode);
-  builder_.add_pocket(pocket);
+  builder_.add_placedDie(placedDie);
+  builder_.add_goodDie(goodDie);
+  builder_.add_purgeForce(purgeForce);
+  builder_.add_placeForce(placeForce);
+  builder_.add_pickForce(pickForce);
   builder_.add_bincode(bincode);
-  builder_.add_reel(reel);
+  builder_.add_pnp(pnp);
   builder_.add_valid(valid);
   return builder_.Finish();
-}
-
-inline flatbuffers::Offset<TblUnitInfo2> CreateTblUnitInfo2Direct(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    int32_t pocket = 0,
-    int16_t reel = 0,
-    int16_t bincode = 0,
-    const stRejCode *rejcode = 0,
-    bool valid = false,
-    const char *inwaferid = nullptr,
-    const stXY *inwaferCoor = 0,
-    const char *outwaferid = nullptr,
-    const stXY *outwaferCoor = 0) {
-  return MitMapType::CreateTblUnitInfo2(
-      _fbb,
-      pocket,
-      reel,
-      bincode,
-      rejcode,
-      valid,
-      inwaferid ? _fbb.CreateString(inwaferid) : 0,
-      inwaferCoor,
-      outwaferid ? _fbb.CreateString(outwaferid) : 0,
-      outwaferCoor);
 }
 
 struct TblLotInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -582,7 +654,8 @@ struct MapRoot FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_WAFERINFO = 8,
     VT_UNIT = 10,
     VT_ULT = 12,
-    VT_ULT2 = 14
+    VT_ULT2 = 14,
+    VT_TBLULT2 = 16
   };
   MapType type() const {
     return static_cast<MapType>(GetField<int8_t>(VT_TYPE, 1));
@@ -599,8 +672,11 @@ struct MapRoot FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::Vector<const stUnitInfo *> *ult() const {
     return GetPointer<const flatbuffers::Vector<const stUnitInfo *> *>(VT_ULT);
   }
-  const flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>> *ult2() const {
-    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>> *>(VT_ULT2);
+  const flatbuffers::Vector<const stUnitInfo2 *> *ult2() const {
+    return GetPointer<const flatbuffers::Vector<const stUnitInfo2 *> *>(VT_ULT2);
+  }
+  const flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>> *TblUlt2() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>> *>(VT_TBLULT2);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
@@ -615,7 +691,9 @@ struct MapRoot FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyVector(ult()) &&
            VerifyOffset(verifier, VT_ULT2) &&
            verifier.VerifyVector(ult2()) &&
-           verifier.VerifyVectorOfTables(ult2()) &&
+           VerifyOffset(verifier, VT_TBLULT2) &&
+           verifier.VerifyVector(TblUlt2()) &&
+           verifier.VerifyVectorOfTables(TblUlt2()) &&
            verifier.EndTable();
   }
 };
@@ -638,8 +716,11 @@ struct MapRootBuilder {
   void add_ult(flatbuffers::Offset<flatbuffers::Vector<const stUnitInfo *>> ult) {
     fbb_.AddOffset(MapRoot::VT_ULT, ult);
   }
-  void add_ult2(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>>> ult2) {
+  void add_ult2(flatbuffers::Offset<flatbuffers::Vector<const stUnitInfo2 *>> ult2) {
     fbb_.AddOffset(MapRoot::VT_ULT2, ult2);
+  }
+  void add_TblUlt2(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>>> TblUlt2) {
+    fbb_.AddOffset(MapRoot::VT_TBLULT2, TblUlt2);
   }
   explicit MapRootBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -660,8 +741,10 @@ inline flatbuffers::Offset<MapRoot> CreateMapRoot(
     flatbuffers::Offset<TblWaferInfo> waferInfo = 0,
     flatbuffers::Offset<flatbuffers::Vector<int16_t>> unit = 0,
     flatbuffers::Offset<flatbuffers::Vector<const stUnitInfo *>> ult = 0,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>>> ult2 = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<const stUnitInfo2 *>> ult2 = 0,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TblUnitInfo2>>> TblUlt2 = 0) {
   MapRootBuilder builder_(_fbb);
+  builder_.add_TblUlt2(TblUlt2);
   builder_.add_ult2(ult2);
   builder_.add_ult(ult);
   builder_.add_unit(unit);
@@ -678,7 +761,8 @@ inline flatbuffers::Offset<MapRoot> CreateMapRootDirect(
     flatbuffers::Offset<TblWaferInfo> waferInfo = 0,
     const std::vector<int16_t> *unit = nullptr,
     const std::vector<stUnitInfo> *ult = nullptr,
-    const std::vector<flatbuffers::Offset<TblUnitInfo2>> *ult2 = nullptr) {
+    const std::vector<stUnitInfo2> *ult2 = nullptr,
+    const std::vector<flatbuffers::Offset<TblUnitInfo2>> *TblUlt2 = nullptr) {
   return MitMapType::CreateMapRoot(
       _fbb,
       type,
@@ -686,7 +770,8 @@ inline flatbuffers::Offset<MapRoot> CreateMapRootDirect(
       waferInfo,
       unit ? _fbb.CreateVector<int16_t>(*unit) : 0,
       ult ? _fbb.CreateVectorOfStructs<stUnitInfo>(*ult) : 0,
-      ult2 ? _fbb.CreateVector<flatbuffers::Offset<TblUnitInfo2>>(*ult2) : 0);
+      ult2 ? _fbb.CreateVectorOfStructs<stUnitInfo2>(*ult2) : 0,
+      TblUlt2 ? _fbb.CreateVector<flatbuffers::Offset<TblUnitInfo2>>(*TblUlt2) : 0);
 }
 
 inline const MitMapType::MapRoot *GetMapRoot(const void *buf) {
