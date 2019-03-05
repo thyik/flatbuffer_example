@@ -1,7 +1,6 @@
 #pragma once
 
-#include "windows.h"
-
+#include <Windows.h>
 #include "..\..\schema\mitMapType_generated.h"
 
 #include <string>
@@ -33,8 +32,14 @@ typedef struct _stFbWaferInfo {
     std::string strWaferId;
 
     float fWaferSize;
+    float edgeClearance;
+    short pickDegree;
 
     _stFbWaferInfo()
+        : fWaferSize (200.0)
+        , shNotch (0)
+        , edgeClearance (5.0)
+        , pickDegree (0)
     {
     };
 } stFbWaferInfo;
@@ -114,6 +119,8 @@ protected:
     flatbuffers::FlatBufferBuilder                  m_builder;
     flatbuffers::Offset<MitMapType::TblLotInfo>     m_lotInfo;
     flatbuffers::Offset<MitMapType::TblWaferInfo>   m_waferInfo;
+    flatbuffers::Offset<flatbuffers::Vector<const MitMapType::stUnitInfo *>>     m_vecFbUnits;
+
     std::vector<flatbuffers::Offset<MitMapType::TblUnitInfo2>>   m_vecType2TblUnitInfo;
 
     // Type1

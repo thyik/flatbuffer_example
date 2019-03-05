@@ -9,6 +9,12 @@ enum MapType : byte {
 	MAP_ULT_MR3_TBL_FMT,
 }
 
+enum format : byte { 
+	Ascii = 1, 
+	Hex = 2 , 
+	Dec = 3 
+}
+
 struct stXY {
   x:short = 0;
   y:short = 0;
@@ -92,12 +98,32 @@ table TblLotInfo {
 
 table TblWaferInfo {
   dieSize:stfXY;
-  notch:short = 0;
+  notch:short = 0; // equivalent to map orientation
   targetDie:[stXY];	// vector of struct
   waferId:string;
   wafersize:float = 200.0;
   maxRowCol:stXY;
   dieGap:stfXY;
+  edgeClearance:float = 5.0;
+  pickDegree:short = 0;  // cater : for drawing purpose
+  
+  // additional info based on standard mit map design
+  // ported from schema MitMAP.fbs;
+  degRotated:short = 0;   // tentatively not use
+  refDie:[stXY];	// vector of struct
+  refChipDir:short = 0;
+  waferFab:string;
+  fabCode:string;
+  intCode:string;
+  device:string;
+  designId:string;
+  layout:string;
+  scribId:string;
+  scribLot:string;
+  mapId:short = 0;
+  startLoc:stXY;
+  nullBin:short = 0;
+  bincodeFormat:format = Hex; // for legacy map purpose
 }
 
 table MapRoot {

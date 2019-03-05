@@ -85,6 +85,7 @@ void CIMitFbMapType::AddLotInfo()
 
 void CIMitFbMapType::AddWaferInfo()
 {
+
     m_waferInfo = CreateTblWaferInfo(m_builder, 
                                         &WaferData().dieSize, 
                                         WaferData().shNotch, 
@@ -92,7 +93,9 @@ void CIMitFbMapType::AddWaferInfo()
                                         m_builder.CreateString(WaferData().strWaferId), 
                                         WaferData().fWaferSize, 
                                         &WaferData().maxRowCol, 
-                                        &WaferData().dieGap);
+                                        &WaferData().dieGap,
+                                        WaferData().edgeClearance,
+                                        WaferData().pickDegree);
     
 }
 
@@ -125,9 +128,12 @@ void CIMitFbMapType::populateInfo()
     m_stWaferData.maxRowCol     = pMap->waferInfo()->maxRowCol() ? *pMap->waferInfo()->maxRowCol() : stXY();
     m_stWaferData.dieGap        = pMap->waferInfo()->dieGap() ? *pMap->waferInfo()->dieGap() : stfXY();
     //
+    m_stWaferData.edgeClearance = pMap->waferInfo()->edgeClearance();
+    m_stWaferData.pickDegree    = pMap->waferInfo()->pickDegree();
+    //
     m_stWaferData.targetDie.clear();
     
-    if (pMap->waferInfo()->targetDie() != nullptr)
+    if (pMap->waferInfo()->targetDie())
     {
         for (auto it = pMap->waferInfo()->targetDie()->begin();
             it != pMap->waferInfo()->targetDie()->end();
@@ -147,6 +153,7 @@ void CIMitFbMapType::StartBuild(size_t size)
     m_vecType2TblUnitInfo.clear();
     m_vecType2Units.clear();
     //m_vecType2UnitInfo.clear();  // this is for read use
+    m_vecFbUnits = 0;
 
     switch (m_eMapType)
     {

@@ -61,15 +61,18 @@ bool CMitFbMapType1::Read(std::string strFilename)
 // generate flatbuffer object to serialise
 bool CMitFbMapType1::Write(std::string strFilename)
 {
-    auto vecFbUnits = m_builder.CreateVectorOfStructs(m_vecUnits);
-
+    //auto vecFbUnits = m_builder.CreateVectorOfStructs(m_vecUnits);
+    if (m_vecFbUnits.o == 0)
+    {
+        m_vecFbUnits = m_builder.CreateVectorOfStructs(m_vecUnits);
+    }
     // create flatbuffers for Map
     auto mitMap = CreateMapRoot(m_builder
                     , m_eMapType
                     , m_lotInfo
                     , m_waferInfo
                     , 0
-                    , vecFbUnits
+                    , m_vecFbUnits
                     , 0
                     );
 
@@ -94,7 +97,8 @@ void CMitFbMapType1::AddUnit(const MitMapType::stUnitInfo &unit)
 
 void CMitFbMapType1::AddUnits(const std::vector<MitMapType::stUnitInfo> &vecUnits)
 {
-    m_vecUnits = vecUnits;
+    // directly build VectorOfStructs to avoid expensive copying / memory allocation
+    m_vecFbUnits = m_builder.CreateVectorOfStructs(vecUnits);
 }
 
 void CMitFbMapType1::GetUnits(std::vector<MitMapType::stUnitInfo> &vecUnits)

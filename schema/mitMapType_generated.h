@@ -63,6 +63,38 @@ inline const char *EnumNameMapType(MapType e) {
   return EnumNamesMapType()[index];
 }
 
+enum format {
+  format_Ascii = 1,
+  format_Hex = 2,
+  format_Dec = 3,
+  format_MIN = format_Ascii,
+  format_MAX = format_Dec
+};
+
+inline const format (&EnumValuesformat())[3] {
+  static const format values[] = {
+    format_Ascii,
+    format_Hex,
+    format_Dec
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesformat() {
+  static const char * const names[] = {
+    "Ascii",
+    "Hex",
+    "Dec",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameformat(format e) {
+  const size_t index = static_cast<int>(e) - static_cast<int>(format_Ascii);
+  return EnumNamesformat()[index];
+}
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(2) stXY FLATBUFFERS_FINAL_CLASS {
  private:
   int16_t x_;
@@ -533,7 +565,24 @@ struct TblWaferInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
     VT_WAFERID = 10,
     VT_WAFERSIZE = 12,
     VT_MAXROWCOL = 14,
-    VT_DIEGAP = 16
+    VT_DIEGAP = 16,
+    VT_EDGECLEARANCE = 18,
+    VT_PICKDEGREE = 20,
+    VT_DEGROTATED = 22,
+    VT_REFDIE = 24,
+    VT_REFCHIPDIR = 26,
+    VT_WAFERFAB = 28,
+    VT_FABCODE = 30,
+    VT_INTCODE = 32,
+    VT_DEVICE = 34,
+    VT_DESIGNID = 36,
+    VT_LAYOUT = 38,
+    VT_SCRIBID = 40,
+    VT_SCRIBLOT = 42,
+    VT_MAPID = 44,
+    VT_STARTLOC = 46,
+    VT_NULLBIN = 48,
+    VT_BINCODEFORMAT = 50
   };
   const stfXY *dieSize() const {
     return GetStruct<const stfXY *>(VT_DIESIZE);
@@ -556,6 +605,57 @@ struct TblWaferInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const stfXY *dieGap() const {
     return GetStruct<const stfXY *>(VT_DIEGAP);
   }
+  float edgeClearance() const {
+    return GetField<float>(VT_EDGECLEARANCE, 5.0f);
+  }
+  int16_t pickDegree() const {
+    return GetField<int16_t>(VT_PICKDEGREE, 0);
+  }
+  int16_t degRotated() const {
+    return GetField<int16_t>(VT_DEGROTATED, 0);
+  }
+  const flatbuffers::Vector<const stXY *> *refDie() const {
+    return GetPointer<const flatbuffers::Vector<const stXY *> *>(VT_REFDIE);
+  }
+  int16_t refChipDir() const {
+    return GetField<int16_t>(VT_REFCHIPDIR, 0);
+  }
+  const flatbuffers::String *waferFab() const {
+    return GetPointer<const flatbuffers::String *>(VT_WAFERFAB);
+  }
+  const flatbuffers::String *fabCode() const {
+    return GetPointer<const flatbuffers::String *>(VT_FABCODE);
+  }
+  const flatbuffers::String *intCode() const {
+    return GetPointer<const flatbuffers::String *>(VT_INTCODE);
+  }
+  const flatbuffers::String *device() const {
+    return GetPointer<const flatbuffers::String *>(VT_DEVICE);
+  }
+  const flatbuffers::String *designId() const {
+    return GetPointer<const flatbuffers::String *>(VT_DESIGNID);
+  }
+  const flatbuffers::String *layout() const {
+    return GetPointer<const flatbuffers::String *>(VT_LAYOUT);
+  }
+  const flatbuffers::String *scribId() const {
+    return GetPointer<const flatbuffers::String *>(VT_SCRIBID);
+  }
+  const flatbuffers::String *scribLot() const {
+    return GetPointer<const flatbuffers::String *>(VT_SCRIBLOT);
+  }
+  int16_t mapId() const {
+    return GetField<int16_t>(VT_MAPID, 0);
+  }
+  const stXY *startLoc() const {
+    return GetStruct<const stXY *>(VT_STARTLOC);
+  }
+  int16_t nullBin() const {
+    return GetField<int16_t>(VT_NULLBIN, 0);
+  }
+  format bincodeFormat() const {
+    return static_cast<format>(GetField<int8_t>(VT_BINCODEFORMAT, 2));
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<stfXY>(verifier, VT_DIESIZE) &&
@@ -567,6 +667,32 @@ struct TblWaferInfo FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            VerifyField<float>(verifier, VT_WAFERSIZE) &&
            VerifyField<stXY>(verifier, VT_MAXROWCOL) &&
            VerifyField<stfXY>(verifier, VT_DIEGAP) &&
+           VerifyField<float>(verifier, VT_EDGECLEARANCE) &&
+           VerifyField<int16_t>(verifier, VT_PICKDEGREE) &&
+           VerifyField<int16_t>(verifier, VT_DEGROTATED) &&
+           VerifyOffset(verifier, VT_REFDIE) &&
+           verifier.VerifyVector(refDie()) &&
+           VerifyField<int16_t>(verifier, VT_REFCHIPDIR) &&
+           VerifyOffset(verifier, VT_WAFERFAB) &&
+           verifier.VerifyString(waferFab()) &&
+           VerifyOffset(verifier, VT_FABCODE) &&
+           verifier.VerifyString(fabCode()) &&
+           VerifyOffset(verifier, VT_INTCODE) &&
+           verifier.VerifyString(intCode()) &&
+           VerifyOffset(verifier, VT_DEVICE) &&
+           verifier.VerifyString(device()) &&
+           VerifyOffset(verifier, VT_DESIGNID) &&
+           verifier.VerifyString(designId()) &&
+           VerifyOffset(verifier, VT_LAYOUT) &&
+           verifier.VerifyString(layout()) &&
+           VerifyOffset(verifier, VT_SCRIBID) &&
+           verifier.VerifyString(scribId()) &&
+           VerifyOffset(verifier, VT_SCRIBLOT) &&
+           verifier.VerifyString(scribLot()) &&
+           VerifyField<int16_t>(verifier, VT_MAPID) &&
+           VerifyField<stXY>(verifier, VT_STARTLOC) &&
+           VerifyField<int16_t>(verifier, VT_NULLBIN) &&
+           VerifyField<int8_t>(verifier, VT_BINCODEFORMAT) &&
            verifier.EndTable();
   }
 };
@@ -595,6 +721,57 @@ struct TblWaferInfoBuilder {
   void add_dieGap(const stfXY *dieGap) {
     fbb_.AddStruct(TblWaferInfo::VT_DIEGAP, dieGap);
   }
+  void add_edgeClearance(float edgeClearance) {
+    fbb_.AddElement<float>(TblWaferInfo::VT_EDGECLEARANCE, edgeClearance, 5.0f);
+  }
+  void add_pickDegree(int16_t pickDegree) {
+    fbb_.AddElement<int16_t>(TblWaferInfo::VT_PICKDEGREE, pickDegree, 0);
+  }
+  void add_degRotated(int16_t degRotated) {
+    fbb_.AddElement<int16_t>(TblWaferInfo::VT_DEGROTATED, degRotated, 0);
+  }
+  void add_refDie(flatbuffers::Offset<flatbuffers::Vector<const stXY *>> refDie) {
+    fbb_.AddOffset(TblWaferInfo::VT_REFDIE, refDie);
+  }
+  void add_refChipDir(int16_t refChipDir) {
+    fbb_.AddElement<int16_t>(TblWaferInfo::VT_REFCHIPDIR, refChipDir, 0);
+  }
+  void add_waferFab(flatbuffers::Offset<flatbuffers::String> waferFab) {
+    fbb_.AddOffset(TblWaferInfo::VT_WAFERFAB, waferFab);
+  }
+  void add_fabCode(flatbuffers::Offset<flatbuffers::String> fabCode) {
+    fbb_.AddOffset(TblWaferInfo::VT_FABCODE, fabCode);
+  }
+  void add_intCode(flatbuffers::Offset<flatbuffers::String> intCode) {
+    fbb_.AddOffset(TblWaferInfo::VT_INTCODE, intCode);
+  }
+  void add_device(flatbuffers::Offset<flatbuffers::String> device) {
+    fbb_.AddOffset(TblWaferInfo::VT_DEVICE, device);
+  }
+  void add_designId(flatbuffers::Offset<flatbuffers::String> designId) {
+    fbb_.AddOffset(TblWaferInfo::VT_DESIGNID, designId);
+  }
+  void add_layout(flatbuffers::Offset<flatbuffers::String> layout) {
+    fbb_.AddOffset(TblWaferInfo::VT_LAYOUT, layout);
+  }
+  void add_scribId(flatbuffers::Offset<flatbuffers::String> scribId) {
+    fbb_.AddOffset(TblWaferInfo::VT_SCRIBID, scribId);
+  }
+  void add_scribLot(flatbuffers::Offset<flatbuffers::String> scribLot) {
+    fbb_.AddOffset(TblWaferInfo::VT_SCRIBLOT, scribLot);
+  }
+  void add_mapId(int16_t mapId) {
+    fbb_.AddElement<int16_t>(TblWaferInfo::VT_MAPID, mapId, 0);
+  }
+  void add_startLoc(const stXY *startLoc) {
+    fbb_.AddStruct(TblWaferInfo::VT_STARTLOC, startLoc);
+  }
+  void add_nullBin(int16_t nullBin) {
+    fbb_.AddElement<int16_t>(TblWaferInfo::VT_NULLBIN, nullBin, 0);
+  }
+  void add_bincodeFormat(format bincodeFormat) {
+    fbb_.AddElement<int8_t>(TblWaferInfo::VT_BINCODEFORMAT, static_cast<int8_t>(bincodeFormat), 2);
+  }
   explicit TblWaferInfoBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -615,15 +792,49 @@ inline flatbuffers::Offset<TblWaferInfo> CreateTblWaferInfo(
     flatbuffers::Offset<flatbuffers::String> waferId = 0,
     float wafersize = 200.0f,
     const stXY *maxRowCol = 0,
-    const stfXY *dieGap = 0) {
+    const stfXY *dieGap = 0,
+    float edgeClearance = 5.0f,
+    int16_t pickDegree = 0,
+    int16_t degRotated = 0,
+    flatbuffers::Offset<flatbuffers::Vector<const stXY *>> refDie = 0,
+    int16_t refChipDir = 0,
+    flatbuffers::Offset<flatbuffers::String> waferFab = 0,
+    flatbuffers::Offset<flatbuffers::String> fabCode = 0,
+    flatbuffers::Offset<flatbuffers::String> intCode = 0,
+    flatbuffers::Offset<flatbuffers::String> device = 0,
+    flatbuffers::Offset<flatbuffers::String> designId = 0,
+    flatbuffers::Offset<flatbuffers::String> layout = 0,
+    flatbuffers::Offset<flatbuffers::String> scribId = 0,
+    flatbuffers::Offset<flatbuffers::String> scribLot = 0,
+    int16_t mapId = 0,
+    const stXY *startLoc = 0,
+    int16_t nullBin = 0,
+    format bincodeFormat = format_Hex) {
   TblWaferInfoBuilder builder_(_fbb);
+  builder_.add_startLoc(startLoc);
+  builder_.add_scribLot(scribLot);
+  builder_.add_scribId(scribId);
+  builder_.add_layout(layout);
+  builder_.add_designId(designId);
+  builder_.add_device(device);
+  builder_.add_intCode(intCode);
+  builder_.add_fabCode(fabCode);
+  builder_.add_waferFab(waferFab);
+  builder_.add_refDie(refDie);
+  builder_.add_edgeClearance(edgeClearance);
   builder_.add_dieGap(dieGap);
   builder_.add_maxRowCol(maxRowCol);
   builder_.add_wafersize(wafersize);
   builder_.add_waferId(waferId);
   builder_.add_targetDie(targetDie);
   builder_.add_dieSize(dieSize);
+  builder_.add_nullBin(nullBin);
+  builder_.add_mapId(mapId);
+  builder_.add_refChipDir(refChipDir);
+  builder_.add_degRotated(degRotated);
+  builder_.add_pickDegree(pickDegree);
   builder_.add_notch(notch);
+  builder_.add_bincodeFormat(bincodeFormat);
   return builder_.Finish();
 }
 
@@ -635,7 +846,24 @@ inline flatbuffers::Offset<TblWaferInfo> CreateTblWaferInfoDirect(
     const char *waferId = nullptr,
     float wafersize = 200.0f,
     const stXY *maxRowCol = 0,
-    const stfXY *dieGap = 0) {
+    const stfXY *dieGap = 0,
+    float edgeClearance = 5.0f,
+    int16_t pickDegree = 0,
+    int16_t degRotated = 0,
+    const std::vector<stXY> *refDie = nullptr,
+    int16_t refChipDir = 0,
+    const char *waferFab = nullptr,
+    const char *fabCode = nullptr,
+    const char *intCode = nullptr,
+    const char *device = nullptr,
+    const char *designId = nullptr,
+    const char *layout = nullptr,
+    const char *scribId = nullptr,
+    const char *scribLot = nullptr,
+    int16_t mapId = 0,
+    const stXY *startLoc = 0,
+    int16_t nullBin = 0,
+    format bincodeFormat = format_Hex) {
   return MitMapType::CreateTblWaferInfo(
       _fbb,
       dieSize,
@@ -644,7 +872,24 @@ inline flatbuffers::Offset<TblWaferInfo> CreateTblWaferInfoDirect(
       waferId ? _fbb.CreateString(waferId) : 0,
       wafersize,
       maxRowCol,
-      dieGap);
+      dieGap,
+      edgeClearance,
+      pickDegree,
+      degRotated,
+      refDie ? _fbb.CreateVectorOfStructs<stXY>(*refDie) : 0,
+      refChipDir,
+      waferFab ? _fbb.CreateString(waferFab) : 0,
+      fabCode ? _fbb.CreateString(fabCode) : 0,
+      intCode ? _fbb.CreateString(intCode) : 0,
+      device ? _fbb.CreateString(device) : 0,
+      designId ? _fbb.CreateString(designId) : 0,
+      layout ? _fbb.CreateString(layout) : 0,
+      scribId ? _fbb.CreateString(scribId) : 0,
+      scribLot ? _fbb.CreateString(scribLot) : 0,
+      mapId,
+      startLoc,
+      nullBin,
+      bincodeFormat);
 }
 
 struct MapRoot FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
